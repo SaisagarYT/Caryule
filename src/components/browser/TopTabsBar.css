@@ -272,44 +272,87 @@
 }
 
 /* ==========================================================================
-   Inactive Tab: Refined Soft-Rounded Minimal Glass Pill
-   (Harmonized with active notch, uncluttered, hover-revealed close button)
+   Inactive Tab: Aerodynamic Slanted Parallelograms (Mirrored \ and Forward /)
    ========================================================================== */
 
 .railway-inactive-tab {
   display: flex;
   align-items: center;
-  gap: 7px;
-  height: 32px;
-  margin-top: 3px;
-  padding: 0 10px;
-  background-color: rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 9px;
-  color: #64748b;
+  height: 33.5px;
+  margin-top: 2.5px;
+  padding: 0 16px;
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 5px;
+  color: #1e293b;
   cursor: pointer;
-  box-shadow: none;
-  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  min-width: 125px;
   max-width: 180px;
   user-select: none;
+  position: relative;
 }
 
+/* Right Inactive Tabs: Forward slant / matching user's reference */
+.railway-inactive-tab.is-slant-right {
+  transform: skewX(-14deg);
+  transform-origin: center bottom;
+  margin-left: 2px;
+  margin-right: 4px;
+}
+
+.railway-inactive-tab.is-slant-right .tab-inner-content {
+  transform: skewX(14deg); /* Counter-skew so icons and text remain upright */
+}
+
+/* Left Inactive Tabs: Mirrored slant \ */
+.railway-inactive-tab.is-slant-left {
+  transform: skewX(14deg);
+  transform-origin: center bottom;
+  margin-left: 4px;
+  margin-right: 2px;
+}
+
+.railway-inactive-tab.is-slant-left .tab-inner-content {
+  transform: skewX(-14deg); /* Counter-skew so icons and text remain upright */
+}
+
+/* Inner content container */
+.tab-inner-content {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  pointer-events: auto;
+}
+
+/* Hover States */
 .railway-inactive-tab:hover {
-  background-color: rgba(0, 0, 0, 0.08);
-  border-color: rgba(0, 0, 0, 0.12);
-  color: #0f172a;
-  transform: translateY(-0.5px);
+  background-color: #f8fafc;
+  border-color: rgba(0, 0, 0, 0.22);
+  color: #020617;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.railway-inactive-tab.is-slant-right:hover {
+  transform: skewX(-14deg) translateY(-0.5px);
+}
+
+.railway-inactive-tab.is-slant-left:hover {
+  transform: skewX(14deg) translateY(-0.5px);
 }
 
 .is-dark-canvas .railway-inactive-tab {
-  background-color: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #a1a1aa;
+  background-color: rgba(26, 26, 32, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #e4e4e7;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
 .is-dark-canvas .railway-inactive-tab:hover {
-  background-color: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.18);
+  background-color: rgba(38, 38, 46, 0.95);
+  border-color: rgba(255, 255, 255, 0.25);
   color: #ffffff;
 }
 
@@ -318,7 +361,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  opacity: 0.85;
+  opacity: 0.9;
   transition: opacity 0.15s ease;
 }
 
@@ -334,6 +377,7 @@
   text-overflow: ellipsis;
   letter-spacing: -0.01em;
   transition: color 0.15s ease;
+  flex: 1;
 }
 
 .railway-inactive-close {

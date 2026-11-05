@@ -113,10 +113,12 @@ export const TopTabsBar: React.FC = () => {
     }
   };
 
+  const activeIndex = tabs.findIndex((t) => t.id === activeTabId);
+
   return (
     <div className="top-tabs-container" role="tablist" aria-label="Open tabs">
       <div className="top-tabs-strip">
-        {tabs.map((tab) => {
+        {tabs.map((tab, index) => {
           const isActive = tab.id === activeTabId;
           const isHibernated = Boolean(tab.isHibernated);
           const title = getCleanTitle(tab);
@@ -257,38 +259,41 @@ export const TopTabsBar: React.FC = () => {
             );
           }
 
-          // Inactive Tab: Clean, soft-rounded glass pill without noisy slashes
+          // Inactive Tab: Aerodynamic Parallelogram (Mirrored \ on left, Forward / on right)
+          const isLeft = index < activeIndex;
           return (
             <div
               key={tab.id}
-              className="railway-inactive-tab"
+              className={`railway-inactive-tab ${isLeft ? 'is-slant-left' : 'is-slant-right'}`}
               role="tab"
               aria-selected="false"
               onClick={() => setActiveTab(tab.id)}
             >
-              {/* Site Icon */}
-              <div className="railway-inactive-badge" aria-hidden="true">
-                {getTabIcon(tab)}
+              <div className="tab-inner-content">
+                {/* Site Icon */}
+                <div className="railway-inactive-badge" aria-hidden="true">
+                  {getTabIcon(tab)}
+                </div>
+
+                {/* High-Contrast Clean Tab Title */}
+                <span className="railway-inactive-title">{title}</span>
+
+                {/* Close Button */}
+                {tabs.length > 1 && (
+                  <button
+                    type="button"
+                    className="railway-inactive-close"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      closeTab(tab.id);
+                    }}
+                    title="Close Tab"
+                    aria-label="Close Tab"
+                  >
+                    <X size={11} strokeWidth={2.2} />
+                  </button>
+                )}
               </div>
-
-              {/* High-Contrast Clean Tab Title */}
-              <span className="railway-inactive-title">{title}</span>
-
-              {/* Close Button */}
-              {tabs.length > 1 && (
-                <button
-                  type="button"
-                  className="railway-inactive-close"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    closeTab(tab.id);
-                  }}
-                  title="Close Tab"
-                  aria-label="Close Tab"
-                >
-                  <X size={11} strokeWidth={2.2} />
-                </button>
-              )}
             </div>
           );
         })}
