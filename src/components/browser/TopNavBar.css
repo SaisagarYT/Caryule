@@ -13,6 +13,23 @@
   z-index: 50;
 }
 
+/* Continuous Top Baseline: Anchors the notch and provides physical frame line */
+.top-nav-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.is-dark-canvas .top-nav-bar::before {
+  background: rgba(255, 255, 255, 0.14);
+}
+
 /* Left Group: Controls + Search Bar */
 .top-nav-left-group {
   display: flex;

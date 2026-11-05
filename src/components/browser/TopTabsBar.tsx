@@ -2,10 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
   X,
   Plus,
-  Moon,
-  Zap,
-  Globe,
-  ChevronDown,
+  Clock,
 } from 'lucide-react';
 import { useBrowserStore } from '../../store/useBrowserStore';
 import type { Tab } from '../../types';
@@ -45,7 +42,11 @@ export const TopTabsBar: React.FC = () => {
 
   const getTabIcon = (tab: Tab) => {
     if (!tab.url) {
-      return <div className="railway-badge-squircle" />;
+      return (
+        <div className="railway-badge-squircle zen-squircle">
+          <div className="zen-squircle-dot" />
+        </div>
+      );
     }
     const url = tab.url.toLowerCase();
     if (url.includes('youtube')) {
@@ -87,26 +88,14 @@ export const TopTabsBar: React.FC = () => {
         </div>
       );
     }
-    return <div className="railway-badge-squircle" />;
+    return (
+      <div className="railway-badge-squircle zen-squircle">
+        <div className="zen-squircle-dot" />
+      </div>
+    );
   };
 
   const getCleanTitle = (tab: Tab) => {
-    if (!tab.url) return tab.title || 'New Tab';
-    try {
-      const parsed = new URL(tab.url);
-      const host = parsed.hostname.replace(/^www\./, '');
-      if (host.includes('google')) return 'Google';
-      if (host.includes('youtube')) return 'YouTube';
-      if (host.includes('github')) return 'GitHub';
-      if (host.includes('wikipedia')) return 'Wikipedia';
-      if (host.includes('reddit')) return 'Reddit';
-      if (host.includes('chatgpt')) return 'ChatGPT';
-      if (host.includes('x.com') || host.includes('twitter')) return 'X / Twitter';
-      return host;
-    } catch {
-      return tab.title || 'New Tab';
-    }
-  };
     if (!tab.url) return tab.title || 'New Tab';
     try {
       const parsed = new URL(tab.url);
@@ -143,46 +132,52 @@ export const TopTabsBar: React.FC = () => {
                 tabIndex={0}
                 onClick={() => setActiveTab(tab.id)}
               >
-                {/* Left Curved S-Wing: Soft, Wide, Gentle Fillet */}
+                {/* Left Curved S-Wing: Wide, Soft, Curvy at Top & Rounded at Bottom */}
                 <svg
-                  viewBox="0 0 34 38"
+                  viewBox="0 0 54 38"
                   className="railway-wing-svg railway-wing-left"
                   aria-hidden="true"
                 >
+                  <line x1="-40" y1="0.5" x2="0" y2="0.5" className="railway-baseline-stroke" />
                   <path
-                    d="M 0,0 C 14,0 18,12 21,22 C 24,31 27,38 34,38 L 34,0 Z"
+                    d="M 0,0 C 24,0 30,12 35,20 C 40,29 46,38 54,38 L 54,0 Z"
                     className="railway-notch-fill"
                   />
                   <path
-                    d="M 0,0 C 14,0 18,12 21,22 C 24,31 27,38 34,38"
+                    d="M 0,0.5 C 24,0.5 30,12 35,20 C 40,29 46,38 54,38"
                     className="railway-notch-stroke"
                   />
                 </svg>
 
-                {/* Central Body of the Notch: Connected directly to top edge */}
+                {/* Central Body of the Notch: Anchored seamlessly flush to top edge */}
                 <div className="railway-notch-body">
-                  {/* Status / Hibernation Glow Icon Badge */}
-                  <button
-                    type="button"
-                    className={`railway-status-badge ${isHibernated ? 'is-hibernating' : 'is-active'}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setPopoverTabId(isPopoverOpen ? null : tab.id);
-                    }}
-                    title={isHibernated ? 'Environment hibernating (click for details)' : 'Tab active & responsive'}
-                    aria-label="Tab Status"
-                  >
-                    {isHibernated ? (
-                      <span className="railway-hibernation-glyph" aria-hidden="true">
-                        <Moon size={11} strokeWidth={2.4} />
-                        <span className="railway-z-glyph">z</span>
-                      </span>
-                    ) : (
-                      <span className="railway-active-glyph" aria-hidden="true">
-                        <Zap size={11} strokeWidth={2.4} />
-                      </span>
-                    )}
-                  </button>
+                  {/* Status / Favicon Glyphs (No neon green colors, consistent palette) */}
+                  {isHibernated ? (
+                    <button
+                      type="button"
+                      className="railway-hibernation-pill"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPopoverTabId(isPopoverOpen ? null : tab.id);
+                      }}
+                      title="Environment hibernating (click for details)"
+                      aria-label="Tab Status"
+                    >
+                      <Clock size={9} strokeWidth={2.4} className="railway-clock-icon" />
+                      <span className="railway-z-glyph">z</span>
+                    </button>
+                  ) : (
+                    <div
+                      className="railway-active-favicon-badge"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPopoverTabId(isPopoverOpen ? null : tab.id);
+                      }}
+                      title="Click to view tab status"
+                    >
+                      {getTabIcon(tab)}
+                    </div>
+                  )}
 
                   {/* Tab Title */}
                   <span className="railway-notch-title" title={tab.title || tab.url || 'New Tab'}>
@@ -206,20 +201,21 @@ export const TopTabsBar: React.FC = () => {
                   )}
                 </div>
 
-                {/* Right Curved S-Wing: Soft, Wide, Gentle Fillet */}
+                {/* Right Curved S-Wing: Wide, Soft, Curvy at Top & Rounded at Bottom */}
                 <svg
-                  viewBox="0 0 34 38"
+                  viewBox="0 0 54 38"
                   className="railway-wing-svg railway-wing-right"
                   aria-hidden="true"
                 >
                   <path
-                    d="M 0,38 C 7,38 10,31 13,22 C 16,12 20,0 34,0 L 0,0 Z"
+                    d="M 0,38 C 8,38 14,29 19,20 C 24,12 30,0 54,0 L 0,0 Z"
                     className="railway-notch-fill"
                   />
                   <path
-                    d="M 0,38 C 7,38 10,31 13,22 C 16,12 20,0 34,0"
+                    d="M 0,38 C 8,38 14,29 19,20 C 24,12 30,0.5 54,0.5"
                     className="railway-notch-stroke"
                   />
+                  <line x1="54" y1="0.5" x2="94" y2="0.5" className="railway-baseline-stroke" />
                 </svg>
 
                 {/* Floating Popover Card: Exactly as shown in the screenshot */}
@@ -252,7 +248,7 @@ export const TopTabsBar: React.FC = () => {
                         className="railway-wake-link"
                         onClick={(e) => handleWakeUp(tab.id, e)}
                       >
-                        {isHibernated ? 'Wake up' : 'Hibernate to save costs'}
+                        {isHibernated ? 'Wake up' : 'Hibernate to save memory'}
                       </button>
                     </div>
                   </div>
@@ -261,7 +257,7 @@ export const TopTabsBar: React.FC = () => {
             );
           }
 
-          // Inactive Tab (Matching "production" breadcrumb pill in reference image)
+          // Inactive Tab: Clean, soft-rounded glass pill without noisy slashes
           return (
             <div
               key={tab.id}
@@ -270,25 +266,15 @@ export const TopTabsBar: React.FC = () => {
               aria-selected="false"
               onClick={() => setActiveTab(tab.id)}
             >
-              {/* Left Breadcrumb chevron / slash */}
-              <span className="railway-crumb-chevron" aria-hidden="true">
-                <ChevronDown size={10} strokeWidth={2.4} />
-              </span>
-              <span className="railway-crumb-slash" aria-hidden="true">/</span>
-
-              {/* Blue/indigo rounded square badge matching image */}
+              {/* Site Icon */}
               <div className="railway-inactive-badge" aria-hidden="true">
-                <div className="railway-badge-squircle" />
+                {getTabIcon(tab)}
               </div>
 
-              {/* High-Contrast Visible Tab Title */}
+              {/* High-Contrast Clean Tab Title */}
               <span className="railway-inactive-title">{title}</span>
 
-              {/* Right chevron */}
-              <span className="railway-crumb-chevron" aria-hidden="true">
-                <ChevronDown size={10} strokeWidth={2.4} />
-              </span>
-
+              {/* Close Button */}
               {tabs.length > 1 && (
                 <button
                   type="button"
@@ -315,7 +301,7 @@ export const TopTabsBar: React.FC = () => {
           title="Open New Tab"
           aria-label="New Tab"
         >
-          <Plus size={14} strokeWidth={2.4} />
+          <Plus size={13} strokeWidth={2.4} />
         </button>
       </div>
     </div>
