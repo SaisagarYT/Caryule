@@ -3,6 +3,7 @@ import {
   X,
   Plus,
   Clock,
+  Globe,
 } from 'lucide-react';
 import { useBrowserStore } from '../../store/useBrowserStore';
 import type { Tab } from '../../types';
@@ -40,57 +41,46 @@ export const TopTabsBar: React.FC = () => {
     setPopoverTabId(null);
   };
 
-  const getTabIcon = (tab: Tab) => {
-    if (!tab.url) {
-      return (
-        <div className="railway-badge-squircle zen-squircle">
-          <div className="zen-squircle-dot" />
-        </div>
-      );
+  const getTabFaviconUrl = (tab: Tab): string | null => {
+    if (tab.favicon) return tab.favicon;
+    if (!tab.url) return null;
+    try {
+      const parsed = new URL(tab.url);
+      const host = parsed.hostname.replace(/^www\./, '');
+      if (host) {
+        return `https://www.google.com/s2/favicons?domain=${host}&sz=32`;
+      }
+    } catch {
+      // not a full url
     }
-    const url = tab.url.toLowerCase();
-    if (url.includes('youtube')) {
+    return null;
+  };
+
+  const renderTabFavicon = (tab: Tab) => {
+    const faviconUrl = getTabFaviconUrl(tab);
+    if (!faviconUrl) {
       return (
-        <div className="railway-badge-squircle" style={{ backgroundColor: '#ff0000' }}>
-          <svg viewBox="0 0 24 24" width="8" height="8" fill="#ffffff">
-            <path d="M9.5 7.5v9l7-4.5-7-4.5z" />
-          </svg>
-        </div>
-      );
-    }
-    if (url.includes('github')) {
-      return (
-        <div className="railway-badge-squircle" style={{ backgroundColor: '#18181b' }}>
-          <svg viewBox="0 0 24 24" width="8" height="8" fill="none" stroke="#ffffff" strokeWidth="2.4">
-            <path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z" />
-          </svg>
-        </div>
-      );
-    }
-    if (url.includes('wikipedia')) {
-      return (
-        <div className="railway-badge-squircle" style={{ backgroundColor: '#2b2b2b' }}>
-          <span style={{ fontSize: '8px', fontWeight: 800, color: '#ffffff', lineHeight: 1 }}>W</span>
-        </div>
-      );
-    }
-    if (url.includes('google')) {
-      return (
-        <div className="railway-badge-squircle" style={{ backgroundColor: '#4285f4' }}>
-          <span style={{ fontSize: '8px', fontWeight: 800, color: '#ffffff', lineHeight: 1 }}>G</span>
-        </div>
-      );
-    }
-    if (url.includes('reddit')) {
-      return (
-        <div className="railway-badge-squircle" style={{ backgroundColor: '#ff4500' }}>
-          <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#ffffff' }} />
+        <div className="tab-favicon-container">
+          <div className="tab-newtab-dot" />
         </div>
       );
     }
     return (
-      <div className="railway-badge-squircle zen-squircle">
-        <div className="zen-squircle-dot" />
+      <div className="tab-favicon-container">
+        <img
+          src={faviconUrl}
+          alt=""
+          className="tab-favicon-img"
+          loading="eager"
+          onError={(e) => {
+            e.currentTarget.style.display = 'none';
+            const fallback = e.currentTarget.parentElement?.querySelector('.tab-favicon-fallback') as HTMLElement;
+            if (fallback) fallback.style.display = 'flex';
+          }}
+        />
+        <div className="tab-favicon-fallback" style={{ display: 'none' }}>
+          <Globe size={13} className="text-zinc-400" />
+        </div>
       </div>
     );
   };
@@ -215,7 +205,7 @@ export const TopTabsBar: React.FC = () => {
                       }}
                       title="Click to view tab status"
                     >
-                      {getTabIcon(tab)}
+                      {renderTabFavicon(tab)}
                     </div>
                   )}
 
@@ -309,7 +299,7 @@ export const TopTabsBar: React.FC = () => {
               <div className="tab-inner-content">
                 {/* Site Icon */}
                 <div className="railway-inactive-badge" aria-hidden="true">
-                  {getTabIcon(tab)}
+                  {renderTabFavicon(tab)}
                 </div>
 
                 {/* High-Contrast Clean Tab Title */}

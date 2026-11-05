@@ -155,6 +155,44 @@
   line-height: 1;
 }
 
+/* Tab Favicon Container & Images */
+.tab-favicon-container {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.tab-favicon-img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  border-radius: 3px;
+  display: block;
+}
+
+.tab-favicon-fallback {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-newtab-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #71717a;
+}
+
+.railway-active-notch-tab .tab-newtab-dot {
+  background-color: #a1a1aa;
+}
+
 /* Squircle Glyphs */
 .railway-badge-squircle {
   width: 14px;

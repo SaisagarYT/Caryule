@@ -41,10 +41,22 @@ export const useBrowserStore = create<BrowserStoreState>((set, get) => ({
   setActivePage: (page: ActivePage) => set({ activePage: page }),
 
   openTab: (url = '', title = 'New Tab') => {
+    let favicon: string | undefined = undefined;
+    if (url) {
+      try {
+        const domain = new URL(url).hostname.replace(/^www\./, '');
+        if (domain) {
+          favicon = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+        }
+      } catch {
+        // ignore
+      }
+    }
     const newTab: Tab = {
       id: `tab-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       title,
       url,
+      favicon,
       isLoading: false,
       canGoBack: false,
       canGoForward: false,
@@ -109,6 +121,25 @@ export const useBrowserStore = create<BrowserStoreState>((set, get) => ({
           ? `https://${url}`
           : `https://www.google.com/search?q=${encodeURIComponent(url)}`;
 
+      let domain = '';
+      try {
+        domain = new URL(formattedUrl).hostname.replace(/^www\./, '');
+      } catch {
+        domain = '';
+      }
+      const favicon = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=32` : undefined;
+
+      let cleanTitle = url;
+      if (domain) {
+        if (domain.includes('google')) cleanTitle = 'Google';
+        else if (domain.includes('youtube')) cleanTitle = 'YouTube';
+        else if (domain.includes('github')) cleanTitle = 'GitHub';
+        else if (domain.includes('wikipedia')) cleanTitle = 'Wikipedia';
+        else if (domain.includes('reddit')) cleanTitle = 'Reddit';
+        else if (domain.includes('britannica')) cleanTitle = 'Britannica';
+        else cleanTitle = domain.charAt(0).toUpperCase() + domain.slice(1);
+      }
+
       if (typeof window !== 'undefined' && window.electronAPI) {
         window.electronAPI.navigate(formattedUrl);
       }
@@ -119,7 +150,8 @@ export const useBrowserStore = create<BrowserStoreState>((set, get) => ({
             ? {
                 ...tab,
                 url: formattedUrl,
-                title: url.replace(/^https?:\/\//, '').split('/')[0] || url,
+                title: cleanTitle,
+                favicon,
                 canGoBack: true,
               }
             : tab

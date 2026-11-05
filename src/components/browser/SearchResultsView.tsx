@@ -6,7 +6,6 @@ import {
   Newspaper,
   MapPin,
   SlidersHorizontal,
-  Sparkles,
   ChevronDown,
   ChevronUp,
   ExternalLink,
@@ -14,11 +13,46 @@ import {
   ArrowUpRight,
   X,
   Share2,
+  Globe,
 } from 'lucide-react';
 import type { SearchFilterTab, SearchData, ImageSearchResult } from '../../types';
 import { fetchSearchResults, extractSearchQuery } from '../../services/searchEngine';
 import { useBrowserStore } from '../../store/useBrowserStore';
 import './SearchResultsView.css';
+
+const getCleanDomain = (url: string, displayUrl?: string): string => {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.replace(/^www\./, '');
+    if (host.includes('wikipedia')) return 'Wikipedia';
+    if (host.includes('britannica')) return 'Encyclopædia Britannica';
+    if (host.includes('github')) return 'GitHub';
+    if (host.includes('youtube')) return 'YouTube';
+    if (host.includes('reddit')) return 'Reddit';
+    if (host.includes('stackoverflow')) return 'Stack Overflow';
+    if (host.includes('sciencefocus')) return 'BBC Science Focus';
+    if (host.includes('bbc')) return 'BBC';
+    if (host.includes('theverge')) return 'The Verge';
+    if (host.includes('techcrunch')) return 'TechCrunch';
+    if (host.includes('reuters')) return 'Reuters';
+    return host.charAt(0).toUpperCase() + host.slice(1);
+  } catch {
+    if (displayUrl) {
+      return displayUrl.split('>')[0].trim().replace(/^https?:\/\//, '').replace(/^www\./, '');
+    }
+    return 'Website';
+  }
+};
+
+const getDomainFavicon = (url: string): string => {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname.replace(/^www\./, '');
+    return `https://www.google.com/s2/favicons?domain=${host}&sz=32`;
+  } catch {
+    return `https://www.google.com/s2/favicons?domain=wikipedia.org&sz=32`;
+  }
+};
 
 interface SearchResultsViewProps {
   url: string;
@@ -186,46 +220,6 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({ url }) => 
           {activeTab === 'all' && (
             <div className="search-tab-all-layout">
               <div className="search-primary-column">
-                {/* AI Overview Box (Signature Agentic Browser Feature) */}
-                {data.aiOverview && (
-                  <div className="ai-overview-card">
-                    <div className="ai-overview-header">
-                      <div className="ai-overview-title-row">
-                        <Sparkles size={16} className="text-blue-500 animate-pulse" />
-                        <span className="ai-overview-title">AI Overview</span>
-                      </div>
-                      <span className="ai-overview-badge">Agentic Summary</span>
-                    </div>
-
-                    <p className="ai-overview-summary">{data.aiOverview.summary}</p>
-
-                    <div className="ai-overview-keypoints">
-                      {data.aiOverview.keyPoints.map((point, idx) => (
-                        <div key={idx} className="ai-overview-point">
-                          <span className="ai-point-bullet">•</span>
-                          <span>{point}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="ai-overview-sources">
-                      <span className="ai-sources-label">Sources:</span>
-                      {data.aiOverview.sources.map((src, idx) => (
-                        <a
-                          key={idx}
-                          href={src.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="ai-source-chip"
-                        >
-                          <span>{src.name}</span>
-                          <ArrowUpRight size={11} />
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
                 {/* Images Preview Strip in "All" Tab */}
                 {data.images && data.images.length > 0 && (
                   <div className="search-all-images-strip">
@@ -302,16 +296,36 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({ url }) => 
 
                 {/* Web Results List */}
                 <div className="search-web-results-list">
-                  {data.results.map((res) => (
-                    <article key={res.id} className="search-result-item">
-                      <div className="search-result-meta">
-                        <div className="search-result-favicon">
-                          <Search size={11} className="text-zinc-400" />
-                        </div>
-                        <span className="search-result-domain">{res.displayUrl}</span>
-                      </div>
+                  {data.results.map((res) => {
+                    const siteName = getCleanDomain(res.url, res.displayUrl);
+                    const faviconUrl = getDomainFavicon(res.url);
 
-                      <h2 className="search-result-title">
+                    return (
+                      <article key={res.id} className="search-result-item">
+                        <div className="search-result-meta">
+                          <div className="search-result-favicon">
+                            <img
+                              src={faviconUrl}
+                              alt=""
+                              className="search-result-favicon-img"
+                              loading="lazy"
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                                const fallback = e.currentTarget.parentElement?.querySelector('.search-result-fallback-icon') as HTMLElement;
+                                if (fallback) fallback.style.display = 'flex';
+                              }}
+                            />
+                            <div className="search-result-fallback-icon" style={{ display: 'none' }}>
+                              <Globe size={13} className="text-zinc-400" />
+                            </div>
+                          </div>
+                          <div className="search-result-meta-text">
+                            <span className="search-result-site-name">{siteName}</span>
+                            <span className="search-result-domain">{res.displayUrl}</span>
+                          </div>
+                        </div>
+
+                        <h2 className="search-result-title">
                         <a
                           href={res.url}
                           onClick={(e) => {
@@ -354,8 +368,9 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({ url }) => 
                         </div>
                       )}
                     </article>
-                  ))}
-                </div>
+                  );
+                })}
+              </div>
 
                 {/* Related Searches Pills */}
                 {data.relatedSearches && data.relatedSearches.length > 0 && (
