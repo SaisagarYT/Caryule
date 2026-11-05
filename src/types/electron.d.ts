@@ -6,22 +6,27 @@ export interface ViewBounds {
 }
 
 export interface NavigationState {
+  tabId: string;
   url: string;
   title: string;
   canGoBack: boolean;
   canGoForward: boolean;
   isLoading: boolean;
+  favicon?: string;
 }
 
 export interface ElectronAPI {
-  navigate: (url: string) => void;
+  navigate: (tabId: string, url: string) => void;
+  switchTab: (tabId: string) => void;
+  closeTab: (tabId: string) => void;
   updateBounds: (bounds: ViewBounds) => void;
   hideWebview: () => void;
-  showWebview: () => void;
-  goBack: () => void;
-  goForward: () => void;
-  reload: () => void;
+  showWebview: (tabId?: string) => void;
+  goBack: (tabId?: string) => void;
+  goForward: (tabId?: string) => void;
+  reload: (tabId?: string) => void;
   onNavigationState: (callback: (state: NavigationState) => void) => () => void;
+  onOpenNewTab?: (callback: (url: string) => void) => () => void;
 }
 
 declare global {
@@ -29,4 +34,3 @@ declare global {
     electronAPI?: ElectronAPI;
   }
 }
-

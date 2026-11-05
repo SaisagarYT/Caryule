@@ -41,6 +41,7 @@ export const useBrowserStore = create<BrowserStoreState>((set, get) => ({
   setActivePage: (page: ActivePage) => set({ activePage: page }),
 
   openTab: (url = '', title = 'New Tab') => {
+    const newTabId = `tab-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     let favicon: string | undefined = undefined;
     if (url) {
       try {
@@ -53,7 +54,7 @@ export const useBrowserStore = create<BrowserStoreState>((set, get) => ({
       }
     }
     const newTab: Tab = {
-      id: `tab-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      id: newTabId,
       title,
       url,
       favicon,
@@ -64,16 +65,31 @@ export const useBrowserStore = create<BrowserStoreState>((set, get) => ({
     };
     set((state) => ({
       tabs: [...state.tabs, newTab],
-      activeTabId: newTab.id,
+      activeTabId: newTabId,
     }));
+
+    if (typeof window !== 'undefined' && window.electronAPI) {
+      if (url) {
+        window.electronAPI.navigate(newTabId, url);
+      } else {
+        window.electronAPI.switchTab(newTabId);
+      }
+    }
   },
 
   closeTab: (id) => {
+    if (typeof window !== 'undefined' && window.electronAPI) {
+      window.electronAPI.closeTab(id);
+    }
     set((state) => {
       if (state.tabs.length <= 1) {
+        const resetId = `tab-${Date.now()}`;
+        if (typeof window !== 'undefined' && window.electronAPI) {
+          window.electronAPI.hideWebview();
+        }
         return {
-          tabs: [{ id: `tab-${Date.now()}`, title: 'New Tab', url: '' }],
-          activeTabId: `tab-${Date.now()}`,
+          tabs: [{ id: resetId, title: 'New Tab', url: '' }],
+          activeTabId: resetId,
         };
       }
       const newTabs = state.tabs.filter((t) => t.id !== id);
@@ -81,6 +97,11 @@ export const useBrowserStore = create<BrowserStoreState>((set, get) => ({
         state.activeTabId === id
           ? newTabs[newTabs.length - 1].id
           : state.activeTabId;
+
+      if (typeof window !== 'undefined' && window.electronAPI && state.activeTabId === id) {
+        window.electronAPI.switchTab(nextActiveId);
+      }
+
       return {
         tabs: newTabs,
         activeTabId: nextActiveId,
@@ -88,7 +109,12 @@ export const useBrowserStore = create<BrowserStoreState>((set, get) => ({
     });
   },
 
-  setActiveTab: (id) => set({ activeTabId: id }),
+  setActiveTab: (id) => {
+    set({ activeTabId: id });
+    if (typeof window !== 'undefined' && window.electronAPI) {
+      window.electronAPI.switchTab(id);
+    }
+  },
 
   toggleHibernateTab: (id: string) => {
     set((state) => ({
@@ -113,62 +139,60 @@ export const useBrowserStore = create<BrowserStoreState>((set, get) => ({
   },
 
   navigateActiveTab: (url) => {
-    set((state) => {
-      const formattedUrl =
-        url.startsWith('http://') || url.startsWith('https://')
-          ? url
-          : url.includes('.') && !url.includes(' ')
-          ? `https://${url}`
-          : `https://www.google.com/search?q=${encodeURIComponent(url)}`;
+    const { activeTabId } = get();
+    const formattedUrl =
+      url.startsWith('http://') || url.startsWith('https://')
+        ? url
+        : url.includes('.') && !url.includes(' ')
+        ? `https://${url}`
+        : `https://www.google.com/search?q=${encodeURIComponent(url)}`;
 
-      let domain = '';
-      try {
-        domain = new URL(formattedUrl).hostname.replace(/^www\./, '');
-      } catch {
-        domain = '';
-      }
-      const favicon = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=32` : undefined;
+    let domain = '';
+    try {
+      domain = new URL(formattedUrl).hostname.replace(/^www\./, '');
+    } catch {
+      domain = '';
+    }
+    const favicon = domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=32` : undefined;
 
-      let cleanTitle = url;
-      if (domain) {
-        if (domain.includes('google')) cleanTitle = 'Google';
-        else if (domain.includes('youtube')) cleanTitle = 'YouTube';
-        else if (domain.includes('github')) cleanTitle = 'GitHub';
-        else if (domain.includes('wikipedia')) cleanTitle = 'Wikipedia';
-        else if (domain.includes('reddit')) cleanTitle = 'Reddit';
-        else if (domain.includes('britannica')) cleanTitle = 'Britannica';
-        else cleanTitle = domain.charAt(0).toUpperCase() + domain.slice(1);
-      }
+    let cleanTitle = url;
+    if (domain) {
+      if (domain.includes('google')) cleanTitle = 'Google';
+      else if (domain.includes('youtube')) cleanTitle = 'YouTube';
+      else if (domain.includes('github')) cleanTitle = 'GitHub';
+      else if (domain.includes('wikipedia')) cleanTitle = 'Wikipedia';
+      else if (domain.includes('reddit')) cleanTitle = 'Reddit';
+      else if (domain.includes('britannica')) cleanTitle = 'Britannica';
+      else cleanTitle = domain.charAt(0).toUpperCase() + domain.slice(1);
+    }
 
-      if (typeof window !== 'undefined' && window.electronAPI) {
-        window.electronAPI.navigate(formattedUrl);
-      }
+    if (typeof window !== 'undefined' && window.electronAPI) {
+      window.electronAPI.navigate(activeTabId, formattedUrl);
+    }
 
-      return {
-        tabs: state.tabs.map((tab) =>
-          tab.id === state.activeTabId
-            ? {
-                ...tab,
-                url: formattedUrl,
-                title: cleanTitle,
-                favicon,
-                canGoBack: true,
-              }
-            : tab
-        ),
-      };
-    });
+    set((state) => ({
+      tabs: state.tabs.map((tab) =>
+        tab.id === state.activeTabId
+          ? {
+              ...tab,
+              url: formattedUrl,
+              title: cleanTitle,
+              favicon,
+              canGoBack: true,
+            }
+          : tab
+      ),
+    }));
   },
 
   goBack: () => {
-    const { tabs, activeTabId } = get();
+    const { tabs, activeTabId, goHome } = get();
     const activeTab = tabs.find((t) => t.id === activeTabId);
 
     if (typeof window !== 'undefined' && window.electronAPI && activeTab?.canGoBack) {
-      window.electronAPI.goBack();
+      window.electronAPI.goBack(activeTabId);
     } else {
-      // If at start of history or in web mode, return to Zen Home
-      get().goHome();
+      goHome();
     }
   },
 
@@ -177,7 +201,7 @@ export const useBrowserStore = create<BrowserStoreState>((set, get) => ({
     const activeTab = tabs.find((t) => t.id === activeTabId);
 
     if (typeof window !== 'undefined' && window.electronAPI && activeTab?.canGoForward) {
-      window.electronAPI.goForward();
+      window.electronAPI.goForward(activeTabId);
     }
   },
 
@@ -186,9 +210,8 @@ export const useBrowserStore = create<BrowserStoreState>((set, get) => ({
     const activeTab = tabs.find((t) => t.id === activeTabId);
 
     if (typeof window !== 'undefined' && window.electronAPI) {
-      window.electronAPI.reload();
+      window.electronAPI.reload(activeTabId);
     } else if (activeTab?.url) {
-      // Trigger reload state for web mode
       updateTab(activeTabId, { isLoading: true });
       setTimeout(() => updateTab(activeTabId, { isLoading: false }), 600);
     }

@@ -228,11 +228,12 @@
 .zen-shortcut-circle {
   width: 48px;
   height: 48px;
-  border-radius: 50%;
+  border-radius: 11px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
   flex-shrink: 0;
 }

@@ -17,7 +17,7 @@ export const BrowserViewport: React.FC<BrowserViewportProps> = ({
   children,
 }) => {
   const stageRef = useRef<HTMLDivElement>(null);
-  const { tabs, activeTabId, updateTab, activePage } = useBrowserStore();
+  const { tabs, activeTabId, updateTab, openTab, activePage } = useBrowserStore();
   const activeTab = tabs.find((t) => t.id === activeTabId) || tabs[0];
   const isElectron = typeof window !== 'undefined' && Boolean(window.electronAPI);
 
@@ -46,39 +46,40 @@ export const BrowserViewport: React.FC<BrowserViewportProps> = ({
     }
 
     const unsubscribe = window.electronAPI.onNavigationState((state) => {
-      if (state.url) {
-        updateTab(activeTabId, {
+      if (state.tabId && state.url) {
+        updateTab(state.tabId, {
           url: state.url,
           title: state.title || state.url,
           canGoBack: state.canGoBack,
           canGoForward: state.canGoForward,
           isLoading: state.isLoading,
+          favicon: state.favicon,
         });
       }
+    });
+
+    const unsubscribeOpen = window.electronAPI.onOpenNewTab?.((url) => {
+      openTab(url);
     });
 
     return () => {
       window.removeEventListener('resize', syncBounds);
       if (resizeObserver) resizeObserver.disconnect();
       unsubscribe();
+      if (unsubscribeOpen) unsubscribeOpen();
     };
-  }, [isElectron, activeTabId, updateTab]);
+  }, [isElectron, updateTab, openTab]);
 
   // Handle showing/hiding native Chromium webview based on activePage and url
   useEffect(() => {
     if (!isElectron || !window.electronAPI) return;
 
-    if (
-      activePage === 'single-browser' &&
-      activeTab &&
-      activeTab.url &&
-      !isSearchQueryUrl(activeTab.url)
-    ) {
-      window.electronAPI.showWebview();
+    if (activePage === 'single-browser' && activeTab?.url) {
+      window.electronAPI.showWebview(activeTabId);
     } else {
       window.electronAPI.hideWebview();
     }
-  }, [isElectron, activePage, activeTab?.url]);
+  }, [isElectron, activePage, activeTabId, activeTab?.url]);
 
   const renderActiveCanvas = () => {
     if (children) return children;
@@ -95,12 +96,15 @@ export const BrowserViewport: React.FC<BrowserViewportProps> = ({
         if (!activeTab?.url) {
           return <ZenCenter />;
         }
+        if (isElectron) {
+          // Native Chromium BrowserView renders the real page in this viewport
+          return null;
+        }
+        // In web preview mode outside Electron:
         if (isSearchQueryUrl(activeTab.url)) {
           return <SearchResultsView url={activeTab.url} />;
         }
-        return !isElectron ? (
-          <WebCanvas url={activeTab.url} />
-        ) : null;
+        return <WebCanvas url={activeTab.url} />;
     }
   };
 

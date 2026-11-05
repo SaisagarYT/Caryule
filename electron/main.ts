@@ -17,9 +17,91 @@ process.env.VITE_PUBLIC = app?.isPackaged
   : path.join(process.env.DIST, '../public');
 
 let mainWindow: BrowserWindowType | null = null;
-let browserView: BrowserViewType | null = null;
-let currentBounds = { x: 62, y: 58, width: 1200, height: 750 };
+const tabViews = new Map<string, BrowserViewType>();
+let activeTabId: string | null = null;
+let currentBounds = { x: 62, y: 78, width: 1200, height: 750 };
 let isWebviewVisible = false;
+
+function createTabView(tabId: string): BrowserViewType {
+  if (!BrowserView) throw new Error('BrowserView is not supported');
+  const view = new BrowserView({
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      sandbox: true,
+    },
+  });
+
+  const sendNavState = () => {
+    if (!mainWindow) return;
+    const wc = view.webContents;
+    mainWindow.webContents.send('browser:nav-state-changed', {
+      tabId,
+      url: wc.getURL(),
+      title: wc.getTitle(),
+      canGoBack: wc.canGoBack(),
+      canGoForward: wc.canGoForward(),
+      isLoading: wc.isLoading(),
+    });
+  };
+
+  view.webContents.on('did-navigate', sendNavState);
+  view.webContents.on('did-navigate-in-page', sendNavState);
+  view.webContents.on('did-start-loading', sendNavState);
+  view.webContents.on('did-stop-loading', sendNavState);
+  view.webContents.on('page-title-updated', sendNavState);
+
+  // Send real favicon whenever page updates its favicon
+  view.webContents.on('page-favicon-updated', (_event, favicons) => {
+    if (favicons && favicons.length > 0 && mainWindow) {
+      const wc = view.webContents;
+      mainWindow.webContents.send('browser:nav-state-changed', {
+        tabId,
+        url: wc.getURL(),
+        title: wc.getTitle(),
+        canGoBack: wc.canGoBack(),
+        canGoForward: wc.canGoForward(),
+        isLoading: wc.isLoading(),
+        favicon: favicons[0],
+      });
+    }
+  });
+
+  // Handle target="_blank" and window.open links by requesting React to open a new tab
+  view.webContents.setWindowOpenHandler(({ url }) => {
+    if (mainWindow) {
+      mainWindow.webContents.send('browser:open-new-tab', url);
+    }
+    return { action: 'deny' };
+  });
+
+  tabViews.set(tabId, view);
+  return view;
+}
+
+function getOrCreateTabView(tabId: string): BrowserViewType {
+  let view = tabViews.get(tabId);
+  if (!view) {
+    view = createTabView(tabId);
+  }
+  return view;
+}
+
+function attachActiveTabView(tabId: string) {
+  if (!mainWindow) return;
+
+  activeTabId = tabId;
+  const view = tabViews.get(tabId);
+
+  if (view) {
+    mainWindow.setBrowserView(view);
+    view.setBounds(currentBounds);
+    isWebviewVisible = true;
+  } else {
+    mainWindow.setBrowserView(null);
+    isWebviewVisible = false;
+  }
+}
 
 function createWindow() {
   if (!BrowserWindow || !BrowserView) return;
@@ -47,34 +129,6 @@ function createWindow() {
   // Remove default File, Edit, View, Window native menu bar to eliminate wasted vertical space
   mainWindow.removeMenu();
 
-  // Create the underlying real Chromium engine view
-  browserView = new BrowserView({
-    webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
-      sandbox: true,
-    },
-  });
-
-  // Track navigation changes and notify UI
-  browserView.webContents.on('did-navigate', () => sendNavState());
-  browserView.webContents.on('did-navigate-in-page', () => sendNavState());
-  browserView.webContents.on('did-start-loading', () => sendNavState());
-  browserView.webContents.on('did-stop-loading', () => sendNavState());
-  browserView.webContents.on('page-title-updated', () => sendNavState());
-
-  function sendNavState() {
-    if (!mainWindow || !browserView) return;
-    const wc = browserView.webContents;
-    mainWindow.webContents.send('browser:nav-state-changed', {
-      url: wc.getURL(),
-      title: wc.getTitle(),
-      canGoBack: wc.canGoBack(),
-      canGoForward: wc.canGoForward(),
-      isLoading: wc.isLoading(),
-    });
-  }
-
   // Load the React Vite frontend
   if (process.env.VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
@@ -84,14 +138,24 @@ function createWindow() {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
-    browserView = null;
+    for (const view of tabViews.values()) {
+      try {
+        (view.webContents as any).close?.();
+      } catch {
+        // ignore
+      }
+    }
+    tabViews.clear();
   });
 }
 
 // IPC Handlers
 if (app && ipcMain && BrowserWindow && BrowserView) {
-  ipcMain.on('browser:navigate', (_event, rawUrl: string) => {
-    if (!browserView || !mainWindow) return;
+  ipcMain.on('browser:navigate', (_event, payload: any, fallbackUrl?: string) => {
+    let tabId = typeof payload === 'object' && payload?.tabId ? payload.tabId : typeof payload === 'string' && fallbackUrl ? payload : activeTabId || 'tab-default';
+    let rawUrl = typeof payload === 'object' && payload?.url ? payload.url : typeof fallbackUrl === 'string' ? fallbackUrl : typeof payload === 'string' ? payload : '';
+
+    if (!rawUrl || !rawUrl.trim()) return;
 
     let url = rawUrl.trim();
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -102,51 +166,91 @@ if (app && ipcMain && BrowserWindow && BrowserView) {
       }
     }
 
-    // Show webview and load URL
-    if (!isWebviewVisible) {
-      mainWindow.setBrowserView(browserView);
+    const view = getOrCreateTabView(tabId);
+    attachActiveTabView(tabId);
+    view.webContents.loadURL(url);
+  });
+
+  ipcMain.on('browser:switch-tab', (_event, tabId: string) => {
+    if (!mainWindow) return;
+    activeTabId = tabId;
+    const view = tabViews.get(tabId);
+    if (view) {
+      mainWindow.setBrowserView(view);
+      view.setBounds(currentBounds);
       isWebviewVisible = true;
-    }
-    browserView.setBounds(currentBounds);
-    browserView.webContents.loadURL(url);
-  });
-
-  ipcMain.on('browser:update-bounds', (_event, bounds) => {
-    currentBounds = bounds;
-    if (browserView && isWebviewVisible) {
-      browserView.setBounds(bounds);
-    }
-  });
-
-  ipcMain.on('browser:hide-webview', () => {
-    if (mainWindow && browserView && isWebviewVisible) {
+    } else {
       mainWindow.setBrowserView(null);
       isWebviewVisible = false;
     }
   });
 
-  ipcMain.on('browser:show-webview', () => {
-    if (mainWindow && browserView && !isWebviewVisible) {
-      mainWindow.setBrowserView(browserView);
-      browserView.setBounds(currentBounds);
-      isWebviewVisible = true;
+  ipcMain.on('browser:close-tab', (_event, tabId: string) => {
+    const view = tabViews.get(tabId);
+    if (view) {
+      if (activeTabId === tabId && mainWindow) {
+        mainWindow.setBrowserView(null);
+        isWebviewVisible = false;
+      }
+      try {
+        (view.webContents as any).close?.();
+      } catch {
+        // ignore
+      }
+      tabViews.delete(tabId);
     }
   });
 
-  ipcMain.on('browser:go-back', () => {
-    if (browserView?.webContents.canGoBack()) {
-      browserView.webContents.goBack();
+  ipcMain.on('browser:update-bounds', (_event, bounds) => {
+    currentBounds = bounds;
+    if (activeTabId && mainWindow && isWebviewVisible) {
+      const view = tabViews.get(activeTabId);
+      if (view) {
+        view.setBounds(bounds);
+      }
     }
   });
 
-  ipcMain.on('browser:go-forward', () => {
-    if (browserView?.webContents.canGoForward()) {
-      browserView.webContents.goForward();
+  ipcMain.on('browser:hide-webview', () => {
+    if (mainWindow) {
+      mainWindow.setBrowserView(null);
+      isWebviewVisible = false;
     }
   });
 
-  ipcMain.on('browser:reload', () => {
-    browserView?.webContents.reload();
+  ipcMain.on('browser:show-webview', (_event, tabId?: string) => {
+    const targetId = tabId || activeTabId;
+    if (targetId && mainWindow) {
+      attachActiveTabView(targetId);
+    }
+  });
+
+  ipcMain.on('browser:go-back', (_event, tabId?: string) => {
+    const targetId = tabId || activeTabId;
+    if (targetId) {
+      const view = tabViews.get(targetId);
+      if (view?.webContents.canGoBack()) {
+        view.webContents.goBack();
+      }
+    }
+  });
+
+  ipcMain.on('browser:go-forward', (_event, tabId?: string) => {
+    const targetId = tabId || activeTabId;
+    if (targetId) {
+      const view = tabViews.get(targetId);
+      if (view?.webContents.canGoForward()) {
+        view.webContents.goForward();
+      }
+    }
+  });
+
+  ipcMain.on('browser:reload', (_event, tabId?: string) => {
+    const targetId = tabId || activeTabId;
+    if (targetId) {
+      const view = tabViews.get(targetId);
+      view?.webContents.reload();
+    }
   });
 
   app.whenReady().then(createWindow);

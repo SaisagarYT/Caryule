@@ -58,6 +58,9 @@ export const TopNavBar: React.FC = () => {
       } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'r') {
         e.preventDefault();
         reload();
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 't') {
+        e.preventDefault();
+        openTab('', 'New Tab');
       } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'l') {
         e.preventDefault();
         inputRef.current?.focus();
@@ -156,8 +159,17 @@ export const TopNavBar: React.FC = () => {
           )}
         </form>
 
-        {/* Right Action Capsule Pod: Home (Pinned to the far right) */}
+        {/* Right Action Capsule Pod: New Tab & Home (Pinned to the far right) */}
         <div className="nav-capsule-pod top-home-pod" aria-label="Page Actions">
+          <button
+            type="button"
+            className="nav-tool-btn"
+            onClick={() => openTab('', 'New Tab')}
+            title="New Tab (Ctrl+T)"
+            aria-label="New Tab"
+          >
+            <Plus size={15} strokeWidth={2.2} />
+          </button>
           <button
             type="button"
             className="nav-tool-btn"
