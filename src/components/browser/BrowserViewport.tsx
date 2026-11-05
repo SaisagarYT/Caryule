@@ -5,12 +5,10 @@ import { TopNavBar } from './TopNavBar';
 import { ZenCenter } from './ZenCenter';
 import { SearchResultsView } from './SearchResultsView';
 import { WebCanvas } from './WebCanvas';
-import { WallpaperCustomizer } from './WallpaperCustomizer';
 import { MultiBrowserPage } from '../pages/MultiBrowserPage';
 import { AIChatPage } from '../pages/AIChatPage';
 import { ProfilePage } from '../pages/ProfilePage';
 import { useBrowserStore } from '../../store/useBrowserStore';
-import { useWallpaperStore } from '../../store/useWallpaperStore';
 import { isSearchQueryUrl } from '../../services/searchEngine';
 import './BrowserViewport.css';
 
@@ -20,7 +18,6 @@ export const BrowserViewport: React.FC<BrowserViewportProps> = ({
 }) => {
   const stageRef = useRef<HTMLDivElement>(null);
   const { tabs, activeTabId, updateTab, activePage } = useBrowserStore();
-  const { type: wallpaperType, value: wallpaperValue, blur, opacity, isDark } = useWallpaperStore();
   const activeTab = tabs.find((t) => t.id === activeTabId) || tabs[0];
   const isElectron = typeof window !== 'undefined' && Boolean(window.electronAPI);
 
@@ -115,19 +112,8 @@ export const BrowserViewport: React.FC<BrowserViewportProps> = ({
       {/* Dynamic Island: Attached directly to the dark top frame, seamlessly covering any border */}
       <DynamicIsland />
 
-      <div className={`browser-canvas ${isDark ? 'is-dark-canvas' : ''}`}>
-        {/* Wallpaper Layer */}
-        <div
-          className="browser-canvas-wallpaper"
-          style={{
-            background: wallpaperType !== 'image' ? wallpaperValue : undefined,
-            backgroundImage: wallpaperType === 'image' ? `url(${wallpaperValue})` : undefined,
-            filter: blur > 0 ? `blur(${blur}px)` : undefined,
-            opacity: opacity,
-          }}
-        />
-
-        {/* Top Chrome Zone: Navigation Pods & Search Bar (Dynamic Island hangs through the center cutout) */}
+      <div className="browser-canvas">
+        {/* Top Chrome Zone: Navigation Pods & Search Bar */}
         <div className="browser-top-zone">
           <TopNavBar />
         </div>
@@ -136,9 +122,6 @@ export const BrowserViewport: React.FC<BrowserViewportProps> = ({
         <div ref={stageRef} className="browser-web-stage">
           {renderActiveCanvas()}
         </div>
-
-        {/* Floating Wallpaper Customizer Widget (Bottom Right) */}
-        <WallpaperCustomizer />
       </div>
     </section>
   );

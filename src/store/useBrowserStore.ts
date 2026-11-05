@@ -42,7 +42,7 @@ export const useBrowserStore = create<BrowserStoreState>((set, get) => ({
 
   openTab: (url = '', title = 'New Tab') => {
     const newTab: Tab = {
-      id: `tab-${Date.now()}`,
+      id: `tab-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       title,
       url,
       isLoading: false,

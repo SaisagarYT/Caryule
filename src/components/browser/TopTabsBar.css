@@ -272,45 +272,44 @@
 }
 
 /* ==========================================================================
-   Inactive Tab: Refined Soft-Rounded Glass Pill
+   Inactive Tab: Refined Soft-Rounded Minimal Glass Pill
+   (Harmonized with active notch, uncluttered, hover-revealed close button)
    ========================================================================== */
 
 .railway-inactive-tab {
   display: flex;
   align-items: center;
   gap: 7px;
-  height: 30px;
-  margin-top: 4px;
+  height: 32px;
+  margin-top: 3px;
   padding: 0 10px;
-  background-color: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  background-color: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 9px;
-  color: #0f172a;
+  color: #64748b;
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: none;
   transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   max-width: 180px;
   user-select: none;
 }
 
 .railway-inactive-tab:hover {
-  background-color: #f8fafc;
-  border-color: rgba(0, 0, 0, 0.22);
-  color: #020617;
-  transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  background-color: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.12);
+  color: #0f172a;
+  transform: translateY(-0.5px);
 }
 
 .is-dark-canvas .railway-inactive-tab {
-  background-color: rgba(22, 22, 26, 0.88);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: #f4f4f5;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #a1a1aa;
 }
 
 .is-dark-canvas .railway-inactive-tab:hover {
-  background-color: rgba(34, 34, 40, 0.95);
-  border-color: rgba(255, 255, 255, 0.28);
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.18);
   color: #ffffff;
 }
 
@@ -319,15 +318,22 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  opacity: 0.85;
+  transition: opacity 0.15s ease;
+}
+
+.railway-inactive-tab:hover .railway-inactive-badge {
+  opacity: 1;
 }
 
 .railway-inactive-title {
   font-size: 12.5px;
-  font-weight: 550;
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   letter-spacing: -0.01em;
+  transition: color 0.15s ease;
 }
 
 .railway-inactive-close {
@@ -343,8 +349,9 @@
   cursor: pointer;
   padding: 0;
   outline: none;
-  opacity: 0.6;
-  transition: all 0.15s ease;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, background-color 0.15s ease, color 0.15s ease;
   margin-left: 2px;
 }
 
@@ -353,12 +360,14 @@
 }
 
 .railway-inactive-tab:hover .railway-inactive-close {
-  opacity: 1;
+  opacity: 0.7;
+  pointer-events: auto;
 }
 
 .railway-inactive-close:hover {
-  background-color: rgba(0, 0, 0, 0.08);
+  background-color: rgba(0, 0, 0, 0.1);
   color: #0f172a;
+  opacity: 1 !important;
 }
 
 .is-dark-canvas .railway-inactive-close:hover {
@@ -376,35 +385,33 @@
   margin-top: 5px;
   margin-left: 2px;
   border-radius: 8px;
-  background-color: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  color: #475569;
+  background-color: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  color: #64748b;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   outline: none;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow: none;
   transition: all 0.15s ease;
 }
 
 .railway-add-tab-btn:hover {
-  background-color: #f8fafc;
-  border-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.12);
   color: #0f172a;
-  transform: translateY(-1px) scale(1.04);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  transform: translateY(-0.5px) scale(1.04);
 }
 
 .is-dark-canvas .railway-add-tab-btn {
-  background-color: rgba(22, 22, 26, 0.88);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: #e4e4e7;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #a1a1aa;
 }
 
 .is-dark-canvas .railway-add-tab-btn:hover {
-  background-color: rgba(34, 34, 40, 0.95);
-  border-color: rgba(255, 255, 255, 0.28);
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.18);
   color: #ffffff;
 }

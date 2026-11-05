@@ -26,18 +26,6 @@
   overflow: hidden;
 }
 
-/* Wallpaper Layer behind canvas content */
-.browser-canvas-wallpaper {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  transition: background 0.4s ease, filter 0.2s ease, opacity 0.2s ease;
-  pointer-events: none;
-  z-index: 1;
-}
-
 /* Top Chrome Zone: Navigation Pod, Search Bar & Dynamic Island (Never covered by webview) */
 .browser-top-zone {
   position: relative;
