@@ -6,14 +6,15 @@
 .top-tabs-container {
   display: flex;
   align-items: flex-start;
-  height: 52px;
+  height: 38px;
   pointer-events: auto;
   user-select: none;
   z-index: 55;
-  margin-left: 8px;
+  margin-left: 4px;
   flex: 1;
   min-width: 0;
   position: relative;
+  -webkit-app-region: no-drag;
 }
 
 .top-tabs-strip {

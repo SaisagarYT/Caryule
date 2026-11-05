@@ -31,12 +31,21 @@ function createWindow() {
     minHeight: 600,
     backgroundColor: '#262626',
     title: 'Carule Agentic Browser',
+    titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      color: '#262626',
+      symbolColor: '#e4e4e7',
+      height: 38,
+    },
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       nodeIntegration: false,
       contextIsolation: true,
     },
   });
+
+  // Remove default File, Edit, View, Window native menu bar to eliminate wasted vertical space
+  mainWindow.removeMenu();
 
   // Create the underlying real Chromium engine view
   browserView = new BrowserView({

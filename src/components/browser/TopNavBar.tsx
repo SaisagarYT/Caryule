@@ -80,8 +80,14 @@ export const TopNavBar: React.FC = () => {
 
   return (
     <header className="top-nav-bar" aria-label="Browser Top Navigation">
-      {/* Left Group: Nav Capsule + Search Bar */}
-      <div className="top-nav-left-group">
+      {/* Row 1: Top Tabs Strip (At the very top, exactly like Google Chrome) */}
+      <div className="top-tabs-row">
+        <TopTabsBar />
+        <div className="top-window-drag-region" />
+      </div>
+
+      {/* Row 2: Navigation & Search Toolbar */}
+      <div className="top-toolbar-row">
         {/* Navigation Buttons Capsule Pod (< > ⟳) */}
         <div className="nav-capsule-pod" aria-label="History Navigation">
           <button
@@ -150,13 +156,8 @@ export const TopNavBar: React.FC = () => {
             </span>
           )}
         </form>
-      </div>
 
-      {/* Center: Signature Railway-Style Notch Tab Component */}
-      <TopTabsBar />
-
-      {/* Right Action Capsule Pod: Home */}
-      <div className="top-nav-right-group">
+        {/* Right Action Capsule Pod: Home */}
         <div className="nav-capsule-pod" aria-label="Page Actions">
           <button
             type="button"

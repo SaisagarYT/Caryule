@@ -1,19 +1,15 @@
-/* Split Navigation Bar: lives inside the top chrome zone */
+/* Top Navigation Bar: Chrome-style Two-Row Header (Row 1: Tabs, Row 2: Toolbar) */
 .top-nav-bar {
   position: relative;
   width: 100%;
-  height: 100%;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 0 14px 0 12px;
+  flex-direction: column;
   background: transparent;
   user-select: none;
-  pointer-events: none;
   z-index: 50;
 }
 
-/* Continuous Top Baseline: Anchors the notch and provides physical frame line */
+/* Continuous Top Baseline: Anchors the notch flush at top */
 .top-nav-bar::before {
   content: '';
   position: absolute;
@@ -30,24 +26,37 @@
   background: rgba(255, 255, 255, 0.14);
 }
 
-/* Left Group: Controls + Search Bar */
-.top-nav-left-group {
+/* Row 1: Dedicated Tabs Row at the very top edge of the window (Chrome-style) */
+.top-tabs-row {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 52px;
-  pointer-events: auto;
-  z-index: 52;
+  align-items: flex-start;
+  width: 100%;
+  height: 38px;
+  position: relative;
+  z-index: 20;
+  -webkit-app-region: drag; /* Allows dragging the window in Electron */
 }
 
-/* Right Group: Action Pod */
-.top-nav-right-group {
+.top-window-drag-region {
+  flex: 1;
+  height: 100%;
+  -webkit-app-region: drag;
+}
+
+/* Row 2: Navigation Toolbar (< > ⟳, Omnibar Search & Actions) */
+.top-toolbar-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  height: 52px;
+  height: 44px;
+  padding: 0 12px;
   pointer-events: auto;
-  z-index: 52;
+  z-index: 10;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.is-dark-canvas .top-toolbar-row {
+  border-bottom-color: rgba(255, 255, 255, 0.06);
 }
 
 /* Floating Dark Capsule Pods: Left (< > ⟳) and Right (⌂ +) */
@@ -105,19 +114,20 @@
   margin: 0 3px;
 }
 
-/* Top Omnibar / Search Bar (Between Nav buttons and Dynamic Island) */
+/* Top Omnibar / Search Bar */
 .top-search-bar {
   display: flex;
   align-items: center;
   gap: 8px;
   height: 34px;
-  width: clamp(170px, 19vw, 290px);
+  flex: 1;
+  max-width: 680px;
   padding: 0 10px;
   background-color: #202024;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 10px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22), 0 1px 3px rgba(0, 0, 0, 0.15);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   pointer-events: auto;
 }
 
@@ -125,7 +135,6 @@
   background-color: #27272c;
   border-color: rgba(255, 255, 255, 0.3);
   box-shadow: 0 6px 22px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.16);
-  width: clamp(190px, 22vw, 330px);
 }
 
 .top-search-icon {
