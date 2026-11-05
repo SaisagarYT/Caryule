@@ -226,6 +226,51 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({ url }) => 
                   </div>
                 )}
 
+                {/* Images Preview Strip in "All" Tab */}
+                {data.images && data.images.length > 0 && (
+                  <div className="search-all-images-strip">
+                    <div className="search-all-images-header">
+                      <div className="search-all-images-title">
+                        <ImageIcon size={16} className="text-zinc-600" />
+                        <span>Images for "{query}"</span>
+                      </div>
+                      <button
+                        type="button"
+                        className="search-all-images-view-all"
+                        onClick={() => setActiveTab('images')}
+                      >
+                        <span>View all images</span>
+                        <ArrowUpRight size={13} />
+                      </button>
+                    </div>
+                    <div className="search-all-images-row">
+                      {data.images.slice(0, 6).map((img) => (
+                        <div
+                          key={img.id}
+                          className="search-all-image-item"
+                          onClick={() => setSelectedImage(img)}
+                          title={img.title}
+                        >
+                          <div className="search-all-image-thumb-wrap">
+                            <img
+                              src={img.imageUrl}
+                              alt={img.title}
+                              className="search-all-image-thumb"
+                              loading="lazy"
+                              onError={(e) => {
+                                const parent = (e.currentTarget.closest('.search-all-image-item') as HTMLElement);
+                                if (parent) parent.style.display = 'none';
+                              }}
+                            />
+                          </div>
+                          <span className="search-all-image-label">{img.title}</span>
+                          <span className="search-all-image-domain">{img.domain}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* People Also Ask Accordions */}
                 {data.peopleAlsoAsk && data.peopleAlsoAsk.length > 0 && (
                   <div className="search-paa-card">
