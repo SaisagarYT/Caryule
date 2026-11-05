@@ -83,7 +83,6 @@ export const TopNavBar: React.FC = () => {
       {/* Row 1: Top Tabs Strip (At the very top, exactly like Google Chrome) */}
       <div className="top-tabs-row">
         <TopTabsBar />
-        <div className="top-window-drag-region" />
       </div>
 
       {/* Row 2: Navigation & Search Toolbar */}
@@ -128,7 +127,7 @@ export const TopNavBar: React.FC = () => {
           </button>
         </div>
 
-        {/* Google-style Search & Address Bar */}
+        {/* Google-style Search & Address Bar: Occupies all remaining available width */}
         <form onSubmit={handleSubmit} className="top-search-bar">
           {isSecure ? (
             <Lock size={13} strokeWidth={2.2} className="top-search-icon text-emerald-400" />
@@ -157,8 +156,8 @@ export const TopNavBar: React.FC = () => {
           )}
         </form>
 
-        {/* Right Action Capsule Pod: Home */}
-        <div className="nav-capsule-pod" aria-label="Page Actions">
+        {/* Right Action Capsule Pod: Home (Pinned to the far right) */}
+        <div className="nav-capsule-pod top-home-pod" aria-label="Page Actions">
           <button
             type="button"
             className="nav-tool-btn"

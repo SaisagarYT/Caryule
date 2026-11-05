@@ -114,10 +114,49 @@ export const TopTabsBar: React.FC = () => {
   };
 
   const activeIndex = tabs.findIndex((t) => t.id === activeTabId);
+  const stripRef = useRef<HTMLDivElement>(null);
+
+  // Mouse wheel horizontal scrolling for tabs
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (stripRef.current) {
+      const scrollAmount = e.deltaY !== 0 ? e.deltaY : e.deltaX;
+      stripRef.current.scrollLeft += scrollAmount;
+    }
+  };
+
+  // Automatically scroll active or new tab into view
+  useEffect(() => {
+    if (stripRef.current) {
+      const activeEl = stripRef.current.querySelector('.railway-active-notch-tab');
+      if (activeEl) {
+        activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+      }
+    }
+  }, [activeTabId, tabs.length]);
+
+  // Double clicking on empty tab bar space opens a new tab
+  const handleContainerDoubleClick = (e: React.MouseEvent) => {
+    if (
+      e.target === e.currentTarget ||
+      (e.target as HTMLElement).classList.contains('top-tabs-strip') ||
+      (e.target as HTMLElement).classList.contains('top-tabs-container')
+    ) {
+      openTab('', 'New Tab');
+    }
+  };
 
   return (
-    <div className="top-tabs-container" role="tablist" aria-label="Open tabs">
-      <div className="top-tabs-strip">
+    <div
+      className="top-tabs-container"
+      role="tablist"
+      aria-label="Open tabs"
+      onDoubleClick={handleContainerDoubleClick}
+    >
+      <div
+        ref={stripRef}
+        className="top-tabs-strip"
+        onWheel={handleWheel}
+      >
         {tabs.map((tab, index) => {
           const isActive = tab.id === activeTabId;
           const isHibernated = Boolean(tab.isHibernated);

@@ -7,13 +7,15 @@
   display: flex;
   align-items: flex-start;
   height: 38px;
+  width: 100%;
   pointer-events: auto;
   user-select: none;
   z-index: 55;
-  margin-left: 4px;
-  flex: 1;
+  margin-left: 0;
+  flex: 1 1 auto;
   min-width: 0;
   position: relative;
+  overflow: hidden;
   -webkit-app-region: no-drag;
 }
 
@@ -22,7 +24,18 @@
   align-items: flex-start;
   gap: 2px;
   height: 100%;
+  width: 100%;
   position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  padding-right: 32px;
+}
+
+.top-tabs-strip::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
 }
 
 /* ==========================================================================
@@ -37,7 +50,9 @@
   cursor: pointer;
   outline: none;
   z-index: 20;
+  flex-shrink: 0;
   transition: transform 0.15s ease;
+  -webkit-app-region: no-drag;
 }
 
 /* Soft S-Curve Wing SVGs (18px wide, 38px tall, compact zero-filler curves) */
@@ -293,6 +308,8 @@
   max-width: 180px;
   user-select: none;
   position: relative;
+  flex-shrink: 0;
+  -webkit-app-region: no-drag;
 }
 
 /* Right Inactive Tabs: Forward slant / matching user's reference */
@@ -436,6 +453,8 @@
   outline: none;
   box-shadow: none;
   transition: all 0.15s ease;
+  flex-shrink: 0;
+  -webkit-app-region: no-drag;
 }
 
 .railway-add-tab-btn:hover {

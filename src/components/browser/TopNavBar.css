@@ -34,22 +34,18 @@
   height: 38px;
   position: relative;
   z-index: 20;
-  -webkit-app-region: drag; /* Allows dragging the window in Electron */
-}
-
-.top-window-drag-region {
-  flex: 1;
-  height: 100%;
-  -webkit-app-region: drag;
 }
 
 /* Row 2: Navigation Toolbar (< > ⟳, Omnibar Search & Actions) */
 .top-toolbar-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 12px;
   height: 44px;
-  padding: 0 12px;
+  padding: 0 14px;
+  width: 100%;
+  box-sizing: border-box;
   pointer-events: auto;
   z-index: 10;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -114,21 +110,29 @@
   margin: 0 3px;
 }
 
-/* Top Omnibar / Search Bar */
+/* Top Omnibar / Search Bar: Occupy ALL available horizontal width */
 .top-search-bar {
   display: flex;
   align-items: center;
   gap: 8px;
   height: 34px;
-  flex: 1;
-  max-width: 680px;
-  padding: 0 10px;
+  flex: 1 1 auto;
+  width: 100%;
+  min-width: 0;
+  max-width: none !important; /* Take full available width */
+  padding: 0 12px;
   background-color: #202024;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 10px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22), 0 1px 3px rgba(0, 0, 0, 0.15);
   transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   pointer-events: auto;
+  box-sizing: border-box;
+}
+
+.top-home-pod {
+  flex-shrink: 0;
+  margin-left: auto; /* Pinned to complete far right side */
 }
 
 .top-search-bar:focus-within {
