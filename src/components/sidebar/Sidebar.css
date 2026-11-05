@@ -1,0 +1,123 @@
+.sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  height: 100%;
+  background-color: var(--sidebar-bg);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0 12px 0;
+  user-select: none;
+  z-index: 40;
+}
+
+/* Top Section: Logo Slot & Main Pages */
+.sidebar-top-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Logo Slot: Pitch black placeholder */
+.sidebar-logo-slot {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background-color: #121214;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.03);
+  margin-bottom: 4px;
+}
+
+/* Nav Icons Group */
+.sidebar-nav-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Sidebar Icon Button */
+.sidebar-icon-btn {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #a1a1aa;
+  cursor: pointer;
+  outline: none;
+  transition: color 0.15s ease;
+}
+
+.sidebar-icon-btn:hover {
+  color: #f4f4f6;
+}
+
+.sidebar-icon-btn.is-active {
+  color: #ffffff;
+}
+
+/* Liquid Smooth Active Pill (Animated via Framer Motion layoutId) */
+.sidebar-active-pill {
+  position: absolute;
+  inset: 0;
+  border-radius: 11px;
+  background-color: rgba(255, 255, 255, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28), 0 1px 3px rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Liquid Left Accent Indicator Bar */
+.sidebar-active-bar {
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 16px;
+  border-radius: 2px;
+  background-color: #ffffff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.45);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Liquid Hover Glider Pill */
+.sidebar-hover-pill {
+  position: absolute;
+  inset: 0;
+  border-radius: 11px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Ensure Icon always renders cleanly above the animated pills */
+.sidebar-icon-wrapper {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Bottom Section: Profile Page */
+.sidebar-bottom-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}

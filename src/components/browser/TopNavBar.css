@@ -1,0 +1,149 @@
+/* Split Navigation Bar: lives inside the top chrome zone */
+.top-nav-bar {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 0 14px 0 12px;
+  background: transparent;
+  user-select: none;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* Left Group: Controls + Search Bar */
+.top-nav-left-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 52px;
+  pointer-events: auto;
+  z-index: 52;
+}
+
+/* Right Group: Action Pod */
+.top-nav-right-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 52px;
+  pointer-events: auto;
+  z-index: 52;
+}
+
+/* Floating Dark Capsule Pods: Left (< > ⟳) and Right (⌂ +) */
+.nav-capsule-pod {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 34px;
+  padding: 0 4px;
+  background-color: #202024;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22), 0 1px 3px rgba(0, 0, 0, 0.15);
+  pointer-events: auto;
+  flex-shrink: 0;
+}
+
+/* Individual Tool Buttons inside Pods */
+.nav-tool-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #e4e4e7;
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.nav-tool-btn:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  transform: translateY(-0.5px);
+}
+
+.nav-tool-btn:active:not(:disabled) {
+  transform: scale(0.94);
+  background-color: rgba(255, 255, 255, 0.18);
+}
+
+.nav-tool-btn:disabled {
+  color: rgba(255, 255, 255, 0.28);
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+.nav-divider {
+  width: 1px;
+  height: 14px;
+  background-color: rgba(255, 255, 255, 0.14);
+  margin: 0 3px;
+}
+
+/* Top Omnibar / Search Bar (Between Nav buttons and Dynamic Island) */
+.top-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  width: clamp(170px, 19vw, 290px);
+  padding: 0 10px;
+  background-color: #202024;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22), 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+}
+
+.top-search-bar:focus-within {
+  background-color: #27272c;
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.16);
+  width: clamp(190px, 22vw, 330px);
+}
+
+.top-search-icon {
+  color: #d4d4d8;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.top-search-bar:focus-within .top-search-icon {
+  color: #ffffff;
+}
+
+.top-search-input {
+  flex: 1;
+  height: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 12.5px;
+  color: #ffffff;
+  font-family: inherit;
+  letter-spacing: -0.01em;
+  min-width: 0;
+}
+
+.top-search-input::placeholder {
+  color: #a1a1aa;
+}
+
+.top-search-badge {
+  font-size: 10.5px;
+  color: #d4d4d8;
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 5px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+}

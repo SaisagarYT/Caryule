@@ -1,0 +1,28 @@
+:root {
+  color-scheme: dark;
+
+  /* Theme Colors */
+  --app-shell-bg: #262626;
+  --sidebar-bg: #262626;
+  --canvas-bg: #ffffff;
+
+  /* Layout Dimensions */
+  --sidebar-width: 56px;
+  --lining-size: 6px;
+  --canvas-radius: 14px;
+
+  /* Dynamic Island Tokens */
+  --island-bg: var(--app-shell-bg);
+  --island-radius: 22px;
+  --island-fillet-size: 20px;
+  --island-height: 42px;
+  --island-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+
+  /* Borders & Shadows */
+  --canvas-border: 1px solid rgba(0, 0, 0, 0.08);
+  --canvas-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  /* Fonts */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+

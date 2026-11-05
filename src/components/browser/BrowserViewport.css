@@ -1,0 +1,57 @@
+/* Browser Viewport Frame: maintains the sidebar color as a continuous lining around the white area */
+.browser-frame {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+  display: flex;
+  padding: var(--lining-size) var(--lining-size) var(--lining-size) 0;
+  background-color: var(--app-shell-bg);
+  overflow: hidden;
+}
+
+/* Main White Canvas Area */
+.browser-canvas {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  background-color: var(--canvas-bg);
+  border-radius: var(--canvas-radius);
+  border: var(--canvas-border);
+  box-shadow: var(--canvas-shadow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Wallpaper Layer behind canvas content */
+.browser-canvas-wallpaper {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background 0.4s ease, filter 0.2s ease, opacity 0.2s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Top Chrome Zone: Navigation Pod, Search Bar & Dynamic Island (Never covered by webview) */
+.browser-top-zone {
+  position: relative;
+  width: 100%;
+  height: 52px;
+  flex-shrink: 0;
+  z-index: 40;
+}
+
+/* Web Stage: Dedicated viewport area below the top zone where Electron BrowserView attaches */
+.browser-web-stage {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+  z-index: 10;
+}

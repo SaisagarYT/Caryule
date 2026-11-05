@@ -1,0 +1,408 @@
+/* ==========================================================================
+   TopTabsBar - Signature Railway-Style Angled Notch Tab Component
+   (Seamless Top Attachment with Zero Gap & High-Contrast Adaptive Tabs)
+   ========================================================================== */
+
+.top-tabs-container {
+  display: flex;
+  align-items: flex-start;
+  height: 52px;
+  pointer-events: auto;
+  user-select: none;
+  z-index: 55;
+  margin-left: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+.top-tabs-strip {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  height: 100%;
+  position: relative;
+}
+
+/* ==========================================================================
+   Active Notch Tab (Trapezoidal Angled Chamfered Notch - ZERO GAP AT TOP)
+   ========================================================================== */
+
+.railway-active-notch-tab {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 0; /* Directly attached to top edge - NO GAP */
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  z-index: 10;
+  transition: transform 0.15s ease;
+}
+
+/* Soft S-Curve Wing SVGs */
+.railway-wing-svg {
+  width: 34px;
+  height: 38px;
+  flex-shrink: 0;
+  display: block;
+}
+
+.railway-wing-left {
+  margin-right: -1px;
+}
+
+.railway-wing-right {
+  margin-left: -1px;
+}
+
+.railway-notch-fill {
+  fill: #141418;
+}
+
+.railway-notch-stroke {
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 1px;
+}
+
+/* Central Body of the Notch */
+.railway-notch-body {
+  height: 38px;
+  background-color: #141418;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 6px;
+  min-width: 150px;
+  max-width: 270px;
+}
+
+/* Status / Hibernation Glyph Badge */
+.railway-status-badge {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  outline: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.railway-status-badge.is-hibernating {
+  background: rgba(99, 102, 241, 0.24);
+  border: 1.5px solid #818cf8;
+  color: #c7d2fe;
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
+}
+
+.railway-status-badge.is-active {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1.5px solid #34d399;
+  color: #a7f3d0;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+}
+
+.railway-status-badge:hover {
+  transform: scale(1.14);
+}
+
+.railway-hibernation-glyph {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.railway-z-glyph {
+  font-size: 8px;
+  font-weight: 700;
+  margin-left: -2px;
+  margin-top: -4px;
+}
+
+.railway-active-glyph {
+  display: flex;
+  align-items: center;
+}
+
+/* Notch Tab Title */
+.railway-notch-title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+}
+
+/* Close Button on Active Tab */
+.railway-notch-close {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  background: transparent;
+  border: none;
+  color: #a1a1aa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+  opacity: 0.6;
+  transition: all 0.15s ease;
+}
+
+.railway-active-notch-tab:hover .railway-notch-close {
+  opacity: 1;
+}
+
+.railway-notch-close:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  transform: scale(1.08);
+}
+
+/* ==========================================================================
+   Floating Popover Card (Matching the exact card in screenshot)
+   ========================================================================== */
+
+.railway-status-popover {
+  position: absolute;
+  top: 42px;
+  left: 18px;
+  width: 260px;
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 14px;
+  box-shadow: 
+    0 18px 40px -4px rgba(0, 0, 0, 0.25),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 15px 18px;
+  z-index: 100;
+  animation: railway-pop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: default;
+}
+
+@keyframes railway-pop {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.railway-popover-text {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #374151;
+  margin: 0 0 12px 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.railway-popover-text strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+.railway-popover-actions {
+  display: flex;
+  align-items: center;
+}
+
+.railway-wake-link {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #2563eb;
+  cursor: pointer;
+  outline: none;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.railway-wake-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   Inactive Tab (Breadcrumb / Pill matching "production" in reference image)
+   ========================================================================== */
+
+.railway-inactive-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  margin-top: 4px;
+  padding: 0 10px;
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 9px;
+  color: #0f172a; /* High contrast - 100% visible on white canvas */
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  max-width: 200px;
+  user-select: none;
+}
+
+.railway-inactive-tab:hover {
+  background-color: #f8fafc;
+  border-color: rgba(0, 0, 0, 0.22);
+  color: #020617;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Adapt for dark canvas / wallpapers */
+.is-dark-canvas .railway-inactive-tab {
+  background-color: rgba(22, 22, 26, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #f4f4f5; /* High contrast - 100% visible on dark canvas */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.is-dark-canvas .railway-inactive-tab:hover {
+  background-color: rgba(34, 34, 40, 0.95);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+}
+
+/* Inactive Tab Elements: Chevrons, Slash & Blue Squircle Badge */
+.railway-crumb-chevron {
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+}
+
+.is-dark-canvas .railway-crumb-chevron {
+  color: #71717a;
+}
+
+.railway-crumb-slash {
+  font-size: 11px;
+  color: #cbd5e1;
+  margin: 0 1px;
+}
+
+.is-dark-canvas .railway-crumb-slash {
+  color: #52525b;
+}
+
+.railway-inactive-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.railway-badge-squircle {
+  width: 12px;
+  height: 12px;
+  background-color: #3b82f6;
+  border-radius: 3.5px;
+  box-shadow: 0 1px 2px rgba(59, 130, 246, 0.3);
+}
+
+.railway-inactive-title {
+  font-size: 12.5px;
+  font-weight: 550;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+
+.railway-inactive-close {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+  opacity: 0.6;
+  transition: all 0.15s ease;
+  margin-left: 2px;
+}
+
+.is-dark-canvas .railway-inactive-close {
+  color: #a1a1aa;
+}
+
+.railway-inactive-tab:hover .railway-inactive-close {
+  opacity: 1;
+}
+
+.railway-inactive-close:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+  color: #0f172a;
+}
+
+.is-dark-canvas .railway-inactive-close:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   New Tab Button (+)
+   ========================================================================== */
+
+.railway-add-tab-btn {
+  width: 28px;
+  height: 28px;
+  margin-top: 5px;
+  margin-left: 2px;
+  border-radius: 8px;
+  background-color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: all 0.15s ease;
+}
+
+.railway-add-tab-btn:hover {
+  background-color: #f8fafc;
+  border-color: rgba(0, 0, 0, 0.2);
+  color: #0f172a;
+  transform: translateY(-1px) scale(1.04);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.is-dark-canvas .railway-add-tab-btn {
+  background-color: rgba(22, 22, 26, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #e4e4e7;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.is-dark-canvas .railway-add-tab-btn:hover {
+  background-color: rgba(34, 34, 40, 0.95);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+}

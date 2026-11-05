@@ -1,0 +1,45 @@
+/* Dynamic Island attached seamlessly to top background */
+.dynamic-island {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: clamp(280px, 32vw, 420px);
+  height: calc(var(--lining-size) + var(--island-height));
+  background-color: var(--island-bg);
+  border-radius: 0 0 var(--island-radius) var(--island-radius);
+  z-index: 60;
+  filter: drop-shadow(var(--island-shadow));
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  pointer-events: auto;
+}
+
+/* Inverted fillets: seamlessly attach the island to the top background */
+.dynamic-island::before,
+.dynamic-island::after {
+  content: '';
+  position: absolute;
+  top: var(--lining-size);
+  width: var(--island-fillet-size);
+  height: var(--island-fillet-size);
+  pointer-events: none;
+}
+
+.dynamic-island::before {
+  left: calc(-1 * var(--island-fillet-size) + 1px);
+  background: radial-gradient(
+    circle at 0% 100%,
+    transparent calc(var(--island-fillet-size) - 1px),
+    var(--island-bg) var(--island-fillet-size)
+  );
+}
+
+.dynamic-island::after {
+  right: calc(-1 * var(--island-fillet-size) + 1px);
+  background: radial-gradient(
+    circle at 100% 100%,
+    transparent calc(var(--island-fillet-size) - 1px),
+    var(--island-bg) var(--island-fillet-size)
+  );
+}
