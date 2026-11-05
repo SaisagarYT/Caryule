@@ -134,19 +134,18 @@ export const TopTabsBar: React.FC = () => {
                 tabIndex={0}
                 onClick={() => setActiveTab(tab.id)}
               >
-                {/* Left Curved S-Wing: Wide, Soft, Curvy at Top & Rounded at Bottom */}
+                {/* Left Curved S-Wing: Compact 18px wide S-curve with zero dead filler space */}
                 <svg
-                  viewBox="0 0 54 38"
+                  viewBox="0 0 18 38"
                   className="railway-wing-svg railway-wing-left"
                   aria-hidden="true"
                 >
-                  <line x1="-40" y1="0.5" x2="0" y2="0.5" className="railway-baseline-stroke" />
                   <path
-                    d="M 0,0 C 24,0 30,12 35,20 C 40,29 46,38 54,38 L 54,0 Z"
+                    d="M 0,0 C 3,0 7,11 9,19 C 11,27 15,38 18,38 L 18,0 Z"
                     className="railway-notch-fill"
                   />
                   <path
-                    d="M 0,0.5 C 24,0.5 30,12 35,20 C 40,29 46,38 54,38"
+                    d="M 0,0.5 C 3,0.5 7,11 9,19 C 11,27 15,38 18,38"
                     className="railway-notch-stroke"
                   />
                 </svg>
@@ -203,21 +202,20 @@ export const TopTabsBar: React.FC = () => {
                   )}
                 </div>
 
-                {/* Right Curved S-Wing: Wide, Soft, Curvy at Top & Rounded at Bottom */}
+                {/* Right Curved S-Wing: Compact 18px wide S-curve with zero dead filler space */}
                 <svg
-                  viewBox="0 0 54 38"
+                  viewBox="0 0 18 38"
                   className="railway-wing-svg railway-wing-right"
                   aria-hidden="true"
                 >
                   <path
-                    d="M 0,38 C 8,38 14,29 19,20 C 24,12 30,0 54,0 L 0,0 Z"
+                    d="M 0,38 C 3,38 7,27 9,19 C 11,11 15,0 18,0 L 0,0 Z"
                     className="railway-notch-fill"
                   />
                   <path
-                    d="M 0,38 C 8,38 14,29 19,20 C 24,12 30,0.5 54,0.5"
+                    d="M 0,38 C 3,38 7,27 9,19 C 11,11 15,0.5 18,0.5"
                     className="railway-notch-stroke"
                   />
-                  <line x1="54" y1="0.5" x2="94" y2="0.5" className="railway-baseline-stroke" />
                 </svg>
 
                 {/* Floating Popover Card: Exactly as shown in the screenshot */}

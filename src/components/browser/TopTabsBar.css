@@ -19,7 +19,7 @@
 .top-tabs-strip {
   display: flex;
   align-items: flex-start;
-  gap: 6px;
+  gap: 2px;
   height: 100%;
   position: relative;
 }
@@ -31,7 +31,7 @@
 .railway-active-notch-tab {
   display: flex;
   align-items: flex-start;
-  margin-top: 0; /* Flush attached to top edge line */
+  margin: 0 -3px; /* Pull adjacent inactive tabs flush against the wing curves */
   position: relative;
   cursor: pointer;
   outline: none;
@@ -39,9 +39,9 @@
   transition: transform 0.15s ease;
 }
 
-/* Soft S-Curve Wing SVGs (54px wide, 38px tall) */
+/* Soft S-Curve Wing SVGs (18px wide, 38px tall, compact zero-filler curves) */
 .railway-wing-svg {
-  width: 54px;
+  width: 18px;
   height: 38px;
   flex-shrink: 0;
   display: block;
@@ -298,8 +298,6 @@
 .railway-inactive-tab.is-slant-right {
   transform: skewX(-14deg);
   transform-origin: center bottom;
-  margin-left: 2px;
-  margin-right: 4px;
 }
 
 .railway-inactive-tab.is-slant-right .tab-inner-content {
@@ -310,8 +308,6 @@
 .railway-inactive-tab.is-slant-left {
   transform: skewX(14deg);
   transform-origin: center bottom;
-  margin-left: 4px;
-  margin-right: 2px;
 }
 
 .railway-inactive-tab.is-slant-left .tab-inner-content {
