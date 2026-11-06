@@ -16,9 +16,21 @@ import {
   Paperclip,
   ArrowUp,
   Check,
+  Globe,
+  Sparkles,
+  FileText,
 } from 'lucide-react';
 import { useBrowserStore } from '../../store/useBrowserStore';
+import type { AgentModel } from '../../types';
 import './AIChatSidebar.css';
+
+interface SourceItem {
+  id: string;
+  title: string;
+  url?: string;
+  favicon?: string;
+  domain?: string;
+}
 
 interface MessageSection {
   title?: string;
@@ -31,52 +43,32 @@ interface ChatMessage {
   text?: string;
   thoughtTime?: string;
   thoughtDetails?: string;
-  resultsCount?: number;
+  sources?: SourceItem[];
   sections?: MessageSection[];
+  timestamp?: string;
 }
 
 export const AIChatSidebar: React.FC = () => {
-  const { tabs, activeTabId, toggleAIChatSidebar } = useBrowserStore();
+  const { tabs, activeTabId, toggleAIChatSidebar, selectedModel, setSelectedModel } = useBrowserStore();
   const activeTab = tabs.find((t) => t.id === activeTabId) || tabs[0];
 
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [expandedThoughtId, setExpandedThoughtId] = useState<string | null>(null);
   const [expandedResultsId, setExpandedResultsId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<Record<string, 'up' | 'down'>>({});
-  const [hoveredThumbsUp, setHoveredThumbsUp] = useState(false);
-
-  // Default state matching reference image exactly
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: 'msg-1',
-      role: 'user',
-      text: 'Create drafts to all my unread emails',
-    },
-    {
-      id: 'msg-2',
-      role: 'assistant',
-      thoughtTime: 'Thought for 9 seconds',
-      thoughtDetails:
-        'Scanned recent inbox threads, extracted sender contexts, prioritized pending replies, and synthesized tone guidelines.',
-      resultsCount: 12,
-      text: "Here's a compact summary of all the email-style content I can see in your workspace right now:",
-      sections: [
-        {
-          title: '1. General studio intro / follow-up emails',
-          bullets: [
-            'Lué Studio is framed as a small but fiercely ambitious, multidisciplinary digital design and development studio, with strong experience across YC startups, creators, big exits, and bestselling authors.',
-            'Standard opener acknowledges delayed responses with a warm apology and sets context that the team is meticulous and perfectionist about quality.',
-          ],
-        },
-      ],
-    },
-  ]);
+  const [hoveredThumbsUp, setHoveredThumbsUp] = useState<string | null>(null);
+  const [attachedFiles, setAttachedFiles] = useState<string[]>([]);
+  const [showMentionMenu, setShowMentionMenu] = useState(false);
+  const [showModelMenu, setShowModelMenu] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Auto-scroll on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
@@ -86,42 +78,130 @@ export const AIChatSidebar: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleSend = () => {
-    const query = input.trim();
+  // Format context label from active tab
+  const activeDomain = activeTab?.url
+    ? (() => {
+        try {
+          return new URL(activeTab.url).hostname.replace(/^www\./, '');
+        } catch {
+          return '';
+        }
+      })()
+    : '';
+
+  const contextLabel = activeTab?.title
+    ? activeTab.title.length > 24
+      ? `${activeTab.title.slice(0, 22)}...`
+      : activeTab.title
+    : activeDomain || 'New Tab';
+
+  // Dynamic intelligent response generation based on actual query & active tab
+  const handleSend = (textOverride?: string) => {
+    const query = (textOverride || input).trim();
     if (!query) return;
 
     const userMsg: ChatMessage = {
       id: `user-${Date.now()}`,
       role: 'user',
       text: query,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
 
     setMessages((prev) => [...prev, userMsg]);
     setInput('');
+    setAttachedFiles([]);
+    setShowMentionMenu(false);
     setIsTyping(true);
 
+    const startTime = performance.now();
+
+    // Collect real sources from open tabs
+    const realSources: SourceItem[] = tabs
+      .filter((t) => Boolean(t.url || t.title))
+      .map((t) => {
+        let domain = '';
+        try {
+          if (t.url) domain = new URL(t.url).hostname.replace(/^www\./, '');
+        } catch {
+          // ignore
+        }
+        return {
+          id: t.id,
+          title: t.title || t.url || 'Tab',
+          url: t.url,
+          favicon: t.favicon,
+          domain: domain || 'workspace',
+        };
+      });
+
+    // Fallback if no tabs have URLs
+    if (realSources.length === 0) {
+      realSources.push({
+        id: 'workspace-ctx',
+        title: activeTab?.title || 'Active Session',
+        domain: 'carule',
+      });
+    }
+
     setTimeout(() => {
+      const elapsed = Math.max(1, Math.round((performance.now() - startTime) / 1000));
+      const isEmailQuery = /email|draft|inbox|reply|mail/i.test(query);
+      const isSummaryQuery = /summar|overview|digest|recap|tldr/i.test(query);
+
+      let introText = '';
+      let sections: MessageSection[] = [];
+
+      if (isEmailQuery) {
+        introText = `Here's a synthesized overview of relevant communications and drafts based on "${query}":`;
+        sections = [
+          {
+            title: '1. Pending correspondence & follow-up queue',
+            bullets: [
+              `Context analyzed from ${activeTab?.title || 'active workspace'} with prioritized reply drafts.`,
+              'Outlined clear, courteous acknowledgments aligned with your current project tone and milestones.',
+              'Flagged high-priority action items ready for your one-click review and dispatch.',
+            ],
+          },
+        ];
+      } else if (isSummaryQuery) {
+        introText = `Here is a structured executive summary of the content in ${activeTab?.title || 'your active view'}:`;
+        sections = [
+          {
+            title: '1. Core takeaways & key findings',
+            bullets: [
+              `Primary topic: Identified central arguments and data points from ${activeDomain || 'the current context'}.`,
+              'Key takeaways organized for fast scanning and immediate reference.',
+              'Strategic next steps prepared based on current browsing objectives.',
+            ],
+          },
+        ];
+      } else {
+        introText = `Here is what I gathered regarding "${query}":`;
+        sections = [
+          {
+            title: `1. Analysis & actionable insights`,
+            bullets: [
+              `Evaluated "${query}" against ${activeTab?.title || 'active workspace'} and ${tabs.length} open tab(s).`,
+              'Synthesized relevant context and extracted key recommendations for your workflow.',
+            ],
+          },
+        ];
+      }
+
       const assistantMsg: ChatMessage = {
         id: `assistant-${Date.now()}`,
         role: 'assistant',
-        thoughtTime: 'Thought for 3 seconds',
-        thoughtDetails: `Analyzed query "${query}" against active workspace and browser context.`,
-        resultsCount: 8,
-        text: `Here is what I found regarding "${query}":`,
-        sections: [
-          {
-            title: `1. Actionable findings for "${query}"`,
-            bullets: [
-              `Extracted relevant data from ${activeTab?.title || 'active browser tab'} and synthesized key insights.`,
-              'Prepared high-confidence suggestions aligned with your project requirements and current browsing workflow.',
-            ],
-          },
-        ],
+        thoughtTime: `Thought for ${elapsed} second${elapsed === 1 ? '' : 's'}`,
+        thoughtDetails: `Scanned active context "${contextLabel}", parsed query intent "${query}", and cross-referenced with ${realSources.length} workspace source(s).`,
+        sources: realSources,
+        text: introText,
+        sections,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
       setIsTyping(false);
-    }, 850);
+    }, 800);
   };
 
   const handleCopy = (msgId: string, text: string) => {
@@ -139,6 +219,40 @@ export const AIChatSidebar: React.FC = () => {
 
   const handleNewChat = () => {
     setMessages([]);
+    setInput('');
+    setAttachedFiles([]);
+    setExpandedThoughtId(null);
+    setExpandedResultsId(null);
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const names = Array.from(files).map((f) => f.name);
+      setAttachedFiles((prev) => [...prev, ...names]);
+    }
+  };
+
+  // Quick prompt recommendations when chat is empty
+  const quickPrompts = activeTab?.url
+    ? [
+        `Summarize ${contextLabel}`,
+        'Find key takeaways',
+        'Extract main topics',
+        'Draft follow-up email',
+      ]
+    : [
+        'Create drafts to my unread emails',
+        'Research a new topic',
+        'Summarize active workspace',
+        'Extract key takeaways',
+      ];
+
+  const modelLabels: Record<AgentModel, string> = {
+    magic: 'Auto',
+    fast: 'Fast',
+    'in-depth': 'In-Depth',
+    holistic: 'Holistic',
   };
 
   return (
@@ -157,7 +271,7 @@ export const AIChatSidebar: React.FC = () => {
         exit={{ x: 60, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 320, damping: 30 }}
       >
-        {/* 1. Header Bar: New AI Chat dropdown + Edit, Split, Close */}
+        {/* 1. Header Bar: New AI Chat dropdown + Right Actions */}
         <div className="clean-chat-header">
           <button
             type="button"
@@ -203,6 +317,33 @@ export const AIChatSidebar: React.FC = () => {
 
         {/* 2. Messages Thread */}
         <div className="clean-chat-thread">
+          {/* Welcome / Empty State when conversation is fresh */}
+          {messages.length === 0 && (
+            <div className="clean-empty-state">
+              <div className="clean-empty-icon-wrap">
+                <Sparkles size={18} className="text-zinc-600" />
+              </div>
+              <h2 className="clean-empty-title">What would you like to explore?</h2>
+              <p className="clean-empty-subtitle">
+                Context is linked to <strong>{contextLabel}</strong>. Ask anything or pick a quick prompt:
+              </p>
+
+              <div className="clean-empty-prompt-chips">
+                {quickPrompts.map((prompt) => (
+                  <button
+                    key={prompt}
+                    type="button"
+                    className="clean-empty-chip-btn"
+                    onClick={() => handleSend(prompt)}
+                  >
+                    <span>{prompt}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Render Active Conversation */}
           {messages.map((m) => {
             if (m.role === 'user') {
               return (
@@ -219,6 +360,7 @@ export const AIChatSidebar: React.FC = () => {
             const isResultsOpen = expandedResultsId === m.id;
             const currentFeedback = feedback[m.id];
             const isCopied = copiedId === m.id;
+            const sources = m.sources || [];
 
             return (
               <div key={m.id} className="clean-assistant-block">
@@ -256,7 +398,7 @@ export const AIChatSidebar: React.FC = () => {
                 )}
 
                 {/* Results / Sources Accordion Row */}
-                {m.resultsCount && (
+                {sources.length > 0 && (
                   <div className="clean-meta-accordion-wrap">
                     <button
                       type="button"
@@ -264,25 +406,28 @@ export const AIChatSidebar: React.FC = () => {
                       onClick={() => setExpandedResultsId(isResultsOpen ? null : m.id)}
                     >
                       <Search size={13} strokeWidth={1.8} className="clean-meta-icon" />
-                      <span className="clean-meta-label">{m.resultsCount} results</span>
+                      <span className="clean-meta-label">{sources.length} results</span>
 
-                      {/* Source Icons Group */}
+                      {/* Dynamic Source Badges from real tabs/sources */}
                       <div className="clean-source-badges">
-                        <span className="clean-badge-square-icon" title="Workspace source">
-                          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M4 4h16v16H4z" />
-                          </svg>
-                        </span>
-                        <span className="clean-badge-avatar" title="Contact reference">
-                          <img
-                            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=48&auto=format&fit=crop&q=80"
-                            alt="source"
-                            className="clean-avatar-img"
-                          />
-                        </span>
-                        <span className="clean-badge-count-pill">
-                          <span className="clean-badge-count-text">3</span>
-                        </span>
+                        {sources.slice(0, 2).map((s, idx) => (
+                          <span
+                            key={s.id || idx}
+                            className={`clean-badge-source-chip ${idx > 0 ? 'is-stacked' : ''}`}
+                            title={s.title}
+                          >
+                            {s.favicon ? (
+                              <img src={s.favicon} alt="" className="clean-badge-img" />
+                            ) : (
+                              <Globe size={9} className="text-zinc-500" />
+                            )}
+                          </span>
+                        ))}
+                        {sources.length > 2 && (
+                          <span className="clean-badge-count-pill" title={`${sources.length} sources total`}>
+                            <span className="clean-badge-count-text">+{sources.length - 2}</span>
+                          </span>
+                        )}
                       </div>
 
                       <ChevronRight
@@ -301,9 +446,11 @@ export const AIChatSidebar: React.FC = () => {
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.18 }}
                         >
-                          <div className="clean-result-item">• Workspace thread: Marketing Strategy Q4</div>
-                          <div className="clean-result-item">• Figma Design System component tokens</div>
-                          <div className="clean-result-item">• Active Tab: {activeTab?.title || activeTab?.url || 'New Tab'}</div>
+                          {sources.map((s) => (
+                            <div key={s.id} className="clean-result-item" title={s.url || s.title}>
+                              • {s.title} {s.domain ? `(${s.domain})` : ''}
+                            </div>
+                          ))}
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -336,6 +483,7 @@ export const AIChatSidebar: React.FC = () => {
                     type="button"
                     className="clean-action-text-btn"
                     title="Insert to document or draft"
+                    onClick={() => handleCopy(m.id, `${m.text}\n${m.sections?.map((s) => s.bullets?.join('\n')).join('\n')}`)}
                   >
                     <CornerUpLeft size={11} strokeWidth={2.2} />
                     <span>Insert</span>
@@ -346,7 +494,7 @@ export const AIChatSidebar: React.FC = () => {
                   <button
                     type="button"
                     className="clean-action-icon-btn"
-                    onClick={() => handleCopy(m.id, `${m.text}\n${m.sections?.map(s => s.bullets?.join('\n')).join('\n')}`)}
+                    onClick={() => handleCopy(m.id, `${m.text}\n${m.sections?.map((s) => s.bullets?.join('\n')).join('\n')}`)}
                     title={isCopied ? 'Copied!' : 'Copy to clipboard'}
                   >
                     {isCopied ? <Check size={12} className="text-emerald-600" /> : <Copy size={12} strokeWidth={1.8} />}
@@ -355,8 +503,8 @@ export const AIChatSidebar: React.FC = () => {
                   {/* Thumbs Up with Floating "Share feedback" Tooltip */}
                   <div
                     className="clean-action-tooltip-anchor"
-                    onMouseEnter={() => setHoveredThumbsUp(true)}
-                    onMouseLeave={() => setHoveredThumbsUp(false)}
+                    onMouseEnter={() => setHoveredThumbsUp(m.id)}
+                    onMouseLeave={() => setHoveredThumbsUp(null)}
                   >
                     <button
                       type="button"
@@ -367,9 +515,8 @@ export const AIChatSidebar: React.FC = () => {
                       <ThumbsUp size={12} strokeWidth={1.8} />
                     </button>
 
-                    {/* Floating Tooltip matching reference screenshot */}
                     <AnimatePresence>
-                      {hoveredThumbsUp && (
+                      {hoveredThumbsUp === m.id && (
                         <motion.div
                           className="clean-floating-tooltip"
                           initial={{ opacity: 0, y: 4, scale: 0.95 }}
@@ -396,6 +543,10 @@ export const AIChatSidebar: React.FC = () => {
                   <button
                     type="button"
                     className="clean-action-icon-btn"
+                    onClick={() => {
+                      const userQuery = [...messages].reverse().find((msg: ChatMessage) => msg.role === 'user')?.text || 'Regenerate response';
+                      handleSend(userQuery);
+                    }}
                     title="Regenerate response"
                   >
                     <RotateCw size={12} strokeWidth={1.8} />
@@ -425,29 +576,81 @@ export const AIChatSidebar: React.FC = () => {
               handleSend();
             }}
           >
-            {/* Top Row: @ + Context Pill */}
+            {/* Top Row: @ + Dynamic Context Pill */}
             <div className="clean-composer-top-row">
               <button
                 type="button"
                 className="clean-at-btn"
-                title="Mention context"
+                onClick={() => setShowMentionMenu((prev) => !prev)}
+                title="Mention context or tabs"
                 aria-label="Add context"
               >
                 @
               </button>
 
-              <div className="clean-context-pill" title="Intro Call: Oğuz...">
+              <div
+                className="clean-context-pill"
+                onClick={() => setShowMentionMenu((prev) => !prev)}
+                title={`Active Context: ${contextLabel}`}
+              >
                 <span className="clean-pill-avatar-wrap">
-                  <img
-                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=48&auto=format&fit=crop&q=80"
-                    alt="avatar"
-                    className="clean-pill-avatar-img"
-                  />
-                  <span className="clean-pill-badge-num">3</span>
+                  {activeTab?.favicon ? (
+                    <img src={activeTab.favicon} alt="" className="clean-pill-avatar-img" />
+                  ) : (
+                    <Globe size={11} className="text-zinc-500" />
+                  )}
+                  {tabs.length > 1 && (
+                    <span className="clean-pill-badge-num">{tabs.length}</span>
+                  )}
                 </span>
-                <span className="clean-pill-text">Intro Call: Oğuz...</span>
+                <span className="clean-pill-text">{contextLabel}</span>
               </div>
             </div>
+
+            {/* Mention Tabs Popup if @ clicked */}
+            {showMentionMenu && (
+              <div className="clean-mention-dropdown">
+                <div className="clean-mention-header">Attach Context</div>
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    className="clean-mention-item"
+                    onClick={() => {
+                      setInput((prev) => `${prev} @${tab.title || 'Tab'} `);
+                      setShowMentionMenu(false);
+                      inputRef.current?.focus();
+                    }}
+                  >
+                    {tab.favicon ? (
+                      <img src={tab.favicon} alt="" className="w-3.5 h-3.5 rounded-sm shrink-0" />
+                    ) : (
+                      <Globe size={12} className="text-zinc-400 shrink-0" />
+                    )}
+                    <span className="clean-mention-item-text">{tab.title || tab.url || 'New Tab'}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Attached Files Chips */}
+            {attachedFiles.length > 0 && (
+              <div className="clean-attached-chips-row">
+                {attachedFiles.map((fname, fidx) => (
+                  <span key={fidx} className="clean-file-chip">
+                    <FileText size={11} className="text-zinc-500 shrink-0" />
+                    <span className="clean-file-chip-name">{fname}</span>
+                    <button
+                      type="button"
+                      className="clean-file-chip-remove"
+                      onClick={() => setAttachedFiles((prev) => prev.filter((_, idx) => idx !== fidx))}
+                    >
+                      <X size={10} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
 
             {/* Middle Row: Clean Input */}
             <div className="clean-composer-input-row">
@@ -461,25 +664,60 @@ export const AIChatSidebar: React.FC = () => {
               />
             </div>
 
+            {/* Hidden File Input for Paperclip */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              className="hidden"
+              style={{ display: 'none' }}
+              onChange={handleFileSelect}
+            />
+
             {/* Bottom Row: Paperclip, divider, Auto, and circular Send button */}
             <div className="clean-composer-bottom-row">
               <div className="clean-composer-tools-left">
                 <button
                   type="button"
                   className="clean-tool-btn"
+                  onClick={() => fileInputRef.current?.click()}
                   title="Attach file"
                   aria-label="Attach file"
                 >
                   <Paperclip size={13} strokeWidth={1.8} />
                 </button>
+
                 <span className="clean-tool-divider" />
-                <button
-                  type="button"
-                  className="clean-model-btn"
-                  title="Model"
-                >
-                  Auto
-                </button>
+
+                {/* Model Selector Popover */}
+                <div className="relative inline-flex items-center">
+                  <button
+                    type="button"
+                    className="clean-model-btn"
+                    onClick={() => setShowModelMenu((prev) => !prev)}
+                    title="Change AI model"
+                  >
+                    {modelLabels[selectedModel] || 'Auto'}
+                  </button>
+
+                  {showModelMenu && (
+                    <div className="clean-model-dropdown">
+                      {(['magic', 'fast', 'in-depth', 'holistic'] as AgentModel[]).map((mKey) => (
+                        <button
+                          key={mKey}
+                          type="button"
+                          className={`clean-model-opt ${selectedModel === mKey ? 'is-selected' : ''}`}
+                          onClick={() => {
+                            setSelectedModel(mKey);
+                            setShowModelMenu(false);
+                          }}
+                        >
+                          {modelLabels[mKey]}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
 
               <button
