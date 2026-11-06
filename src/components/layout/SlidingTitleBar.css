@@ -1,0 +1,88 @@
+/* Invisible Top Edge Trigger Zone */
+.sliding-titlebar-trigger-zone {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  z-index: 9998;
+  pointer-events: auto;
+  background: transparent;
+}
+
+/* Sliding Top Titlebar across entire window */
+.sliding-titlebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 38px;
+  background-color: var(--app-shell-bg, #262626);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 9999;
+  user-select: none;
+  backdrop-filter: blur(8px);
+}
+
+/* Center / Left Drag Region */
+.sliding-titlebar-drag-region {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 18px;
+  -webkit-app-region: drag;
+  cursor: grab;
+}
+
+.sliding-titlebar-app-name {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+}
+
+/* Window Control Buttons Pod at Far-Right (— ▢ ✕) */
+.sliding-titlebar-controls {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  -webkit-app-region: no-drag;
+}
+
+.sliding-control-btn {
+  width: 44px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #e4e4e7;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.sliding-control-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.sliding-control-btn:active {
+  background-color: rgba(255, 255, 255, 0.16);
+}
+
+/* Danger Red Hover on Close Button */
+.sliding-control-btn.btn-close:hover {
+  background-color: #e11d48;
+  color: #ffffff;
+}
+
+.sliding-control-btn.btn-close:active {
+  background-color: #be123c;
+}

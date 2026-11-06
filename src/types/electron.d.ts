@@ -27,6 +27,11 @@ export interface ElectronAPI {
   reload: (tabId?: string) => void;
   onNavigationState: (callback: (state: NavigationState) => void) => () => void;
   onOpenNewTab?: (callback: (url: string) => void) => () => void;
+  minimizeWindow?: () => void;
+  maximizeWindow?: () => void;
+  closeWindow?: () => void;
+  isMaximized?: () => Promise<boolean>;
+  onMaximizeChange?: (callback: (isMax: boolean) => void) => () => void;
 }
 
 declare global {

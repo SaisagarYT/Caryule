@@ -41,4 +41,16 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.removeListener('browser:open-new-tab', subscription);
     };
   },
+  // Window Management Controls
+  minimizeWindow: () => ipcRenderer.send('window:minimize'),
+  maximizeWindow: () => ipcRenderer.send('window:maximize'),
+  closeWindow: () => ipcRenderer.send('window:close'),
+  isMaximized: () => ipcRenderer.invoke('window:is-maximized'),
+  onMaximizeChange: (callback: (isMax: boolean) => void) => {
+    const subscription = (_event: unknown, isMax: boolean) => callback(isMax);
+    ipcRenderer.on('window:maximize-change', subscription);
+    return () => {
+      ipcRenderer.removeListener('window:maximize-change', subscription);
+    };
+  },
 });

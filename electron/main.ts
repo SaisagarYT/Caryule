@@ -114,16 +114,19 @@ function createWindow() {
     backgroundColor: '#262626',
     title: 'Carule Agentic Browser',
     titleBarStyle: 'hidden',
-    titleBarOverlay: {
-      color: '#262626',
-      symbolColor: '#e4e4e7',
-      height: 38,
-    },
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       nodeIntegration: false,
       contextIsolation: true,
     },
+  });
+
+  mainWindow.on('maximize', () => {
+    mainWindow?.webContents.send('window:maximize-change', true);
+  });
+
+  mainWindow.on('unmaximize', () => {
+    mainWindow?.webContents.send('window:maximize-change', false);
   });
 
   // Remove default File, Edit, View, Window native menu bar to eliminate wasted vertical space
@@ -223,6 +226,28 @@ if (app && ipcMain && BrowserWindow && BrowserView) {
     if (targetId && mainWindow) {
       attachActiveTabView(targetId);
     }
+  });
+
+  // Window Controls IPC
+  ipcMain.on('window:minimize', () => {
+    mainWindow?.minimize();
+  });
+
+  ipcMain.on('window:maximize', () => {
+    if (!mainWindow) return;
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize();
+    } else {
+      mainWindow.maximize();
+    }
+  });
+
+  ipcMain.on('window:close', () => {
+    mainWindow?.close();
+  });
+
+  ipcMain.handle('window:is-maximized', () => {
+    return mainWindow?.isMaximized() ?? false;
   });
 
   ipcMain.on('browser:go-back', (_event, tabId?: string) => {
