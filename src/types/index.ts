@@ -42,6 +42,9 @@ export interface BrowserStoreState {
   // Sidebar
   isSidebarCollapsed: boolean;
 
+  // AI Chat Sidebar Drawer
+  isAIChatSidebarOpen: boolean;
+
   // Agent Settings
   selectedModel: AgentModel;
 
@@ -60,6 +63,8 @@ export interface BrowserStoreState {
   setIslandState: (updates: Partial<DynamicIslandState>) => void;
   toggleSidebar: () => void;
   setSidebarCollapsed: (collapsed: boolean) => void;
+  toggleAIChatSidebar: () => void;
+  setAIChatSidebarOpen: (open: boolean) => void;
   setSelectedModel: (model: AgentModel) => void;
   toggleOmnibar: (open?: boolean) => void;
   setOmnibarQuery: (query: string) => void;

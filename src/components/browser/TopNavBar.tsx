@@ -24,8 +24,8 @@ export const TopNavBar: React.FC = () => {
     goHome,
     openTab,
     navigateActiveTab,
-    activePage,
-    setActivePage,
+    isAIChatSidebarOpen,
+    toggleAIChatSidebar,
   } = useBrowserStore();
 
   const activeTab = tabs.find((t) => t.id === activeTabId) || tabs[0];
@@ -185,10 +185,10 @@ export const TopNavBar: React.FC = () => {
             </button>
             <button
               type="button"
-              className={`nav-tool-btn ${activePage === 'ai-chat' ? 'is-active' : ''}`}
-              onClick={() => setActivePage(activePage === 'ai-chat' ? 'single-browser' : 'ai-chat')}
-              title={activePage === 'ai-chat' ? 'Close Sidebar' : 'Open Sidebar'}
-              aria-label="Toggle Sidebar"
+              className={`nav-tool-btn ${isAIChatSidebarOpen ? 'is-active' : ''}`}
+              onClick={toggleAIChatSidebar}
+              title={isAIChatSidebarOpen ? 'Close Agentic Chat' : 'Open Agentic Chat (Panel)'}
+              aria-label="Toggle Agentic Chat Sidebar"
             >
               <PanelRight size={14} strokeWidth={2} />
             </button>

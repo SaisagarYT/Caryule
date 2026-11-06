@@ -8,6 +8,8 @@ import { WebCanvas } from './WebCanvas';
 import { MultiBrowserPage } from '../pages/MultiBrowserPage';
 import { AIChatPage } from '../pages/AIChatPage';
 import { ProfilePage } from '../pages/ProfilePage';
+import { AnimatePresence } from 'framer-motion';
+import { AIChatSidebar } from './AIChatSidebar';
 import { useBrowserStore } from '../../store/useBrowserStore';
 import { isSearchQueryUrl } from '../../services/searchEngine';
 import './BrowserViewport.css';
@@ -17,7 +19,7 @@ export const BrowserViewport: React.FC<BrowserViewportProps> = ({
   children,
 }) => {
   const stageRef = useRef<HTMLDivElement>(null);
-  const { tabs, activeTabId, updateTab, openTab, activePage } = useBrowserStore();
+  const { tabs, activeTabId, updateTab, openTab, activePage, isAIChatSidebarOpen } = useBrowserStore();
   const activeTab = tabs.find((t) => t.id === activeTabId) || tabs[0];
   const isElectron = typeof window !== 'undefined' && Boolean(window.electronAPI);
 
@@ -110,7 +112,7 @@ export const BrowserViewport: React.FC<BrowserViewportProps> = ({
 
   return (
     <section
-      className={`browser-frame ${className}`.trim()}
+      className={`browser-frame ${isAIChatSidebarOpen ? 'has-chat-open' : ''} ${className}`.trim()}
       aria-label="Browser Viewport Frame"
     >
       {/* Dynamic Island: Attached directly to the dark top frame, seamlessly covering any border */}
@@ -127,6 +129,11 @@ export const BrowserViewport: React.FC<BrowserViewportProps> = ({
           {renderActiveCanvas()}
         </div>
       </div>
+
+      {/* Sliding Right-side Agentic Chat Sidebar */}
+      <AnimatePresence>
+        {isAIChatSidebarOpen && <AIChatSidebar />}
+      </AnimatePresence>
     </section>
   );
 };

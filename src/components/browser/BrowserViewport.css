@@ -5,7 +5,7 @@
   height: 100%;
   min-width: 0;
   display: flex;
-  padding: 0 var(--lining-size) var(--lining-size) 0; /* Zero top padding so notch tab docks flush to top y=0 */
+  padding: 0; /* Handled via canvas margins so notch tab docks flush at y=0 and chat drawer has equal padding */
   background-color: var(--app-shell-bg);
   overflow: hidden;
 }
@@ -15,7 +15,9 @@
   position: relative;
   flex: 1;
   width: 100%;
-  height: 100%;
+  height: auto;
+  min-width: 0;
+  margin: 0 var(--lining-size) var(--lining-size) 0; /* Flush at top, lining at bottom and right */
   background-color: var(--canvas-bg);
   border-radius: 0 0 var(--canvas-radius) var(--canvas-radius); /* Flush at top */
   border: var(--canvas-border);
@@ -24,6 +26,11 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition: margin-right 0.25s ease;
+}
+
+.browser-frame.has-chat-open .browser-canvas {
+  margin-right: 8px; /* Lining between canvas and sliding chat card */
 }
 
 /* Top Chrome Zone: Navigation Pod, Search Bar & Dynamic Island (Never covered by webview) */

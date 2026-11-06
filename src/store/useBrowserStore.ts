@@ -34,6 +34,9 @@ export const useBrowserStore = create<BrowserStoreState>((set, get) => ({
   // Sidebar
   isSidebarCollapsed: false,
 
+  // AI Chat Sidebar Drawer
+  isAIChatSidebarOpen: false,
+
   // Agent Defaults
   selectedModel: 'magic',
 
@@ -244,6 +247,12 @@ export const useBrowserStore = create<BrowserStoreState>((set, get) => ({
     set((state) => ({ isSidebarCollapsed: !state.isSidebarCollapsed })),
 
   setSidebarCollapsed: (collapsed) => set({ isSidebarCollapsed: collapsed }),
+
+  toggleAIChatSidebar: () =>
+    set((state) => ({ isAIChatSidebarOpen: !state.isAIChatSidebarOpen })),
+
+  setAIChatSidebarOpen: (open: boolean) =>
+    set({ isAIChatSidebarOpen: open }),
 
   setSelectedModel: (model) => set({ selectedModel: model }),
 
