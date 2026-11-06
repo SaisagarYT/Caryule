@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
   Plus,
@@ -142,200 +143,217 @@ export const TopTabsBar: React.FC = () => {
       aria-label="Open tabs"
       onDoubleClick={handleContainerDoubleClick}
     >
-      <div
-        ref={stripRef}
-        className="top-tabs-strip"
-        onWheel={handleWheel}
+      <motion.div
+        layout
+        transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+        className="top-tabs-island"
       >
-        {tabs.map((tab, index) => {
-          const isActive = tab.id === activeTabId;
-          const isHibernated = Boolean(tab.isHibernated);
-          const title = getCleanTitle(tab);
-          const isPopoverOpen = popoverTabId === tab.id;
+        <div
+          ref={stripRef}
+          className="top-tabs-strip"
+          onWheel={handleWheel}
+        >
+          <AnimatePresence initial={false}>
+            {tabs.map((tab, index) => {
+              const isActive = tab.id === activeTabId;
+              const isHibernated = Boolean(tab.isHibernated);
+              const title = getCleanTitle(tab);
+              const isPopoverOpen = popoverTabId === tab.id;
 
-          if (isActive) {
-            return (
-              <div
-                key={tab.id}
-                className="railway-active-notch-tab"
-                role="tab"
-                aria-selected="true"
-                tabIndex={0}
-                onClick={() => setActiveTab(tab.id)}
-              >
-                {/* Left Curved S-Wing: Compact 18px wide S-curve with zero dead filler space */}
-                <svg
-                  viewBox="0 0 18 38"
-                  className="railway-wing-svg railway-wing-left"
-                  aria-hidden="true"
+              if (isActive) {
+                return (
+                  <motion.div
+                    layout
+                    key={tab.id}
+                    initial={{ opacity: 0, scale: 0.94 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.94 }}
+                    transition={{ duration: 0.2 }}
+                    className="railway-active-notch-tab"
+                    role="tab"
+                    aria-selected="true"
+                    tabIndex={0}
+                    onClick={() => setActiveTab(tab.id)}
+                  >
+                    {/* Left Curved S-Wing */}
+                    <svg
+                      viewBox="0 0 18 38"
+                      className="railway-wing-svg railway-wing-left"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M 0,0 C 3,0 7,11 9,19 C 11,27 15,38 18,38 L 18,0 Z"
+                        className="railway-notch-fill"
+                      />
+                      <path
+                        d="M 0,0.5 C 3,0.5 7,11 9,19 C 11,27 15,38 18,38"
+                        className="railway-notch-stroke"
+                      />
+                    </svg>
+
+                    {/* Central Body of the Notch (White color) */}
+                    <div className="railway-notch-body">
+                      {isHibernated ? (
+                        <button
+                          type="button"
+                          className="railway-hibernation-pill"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPopoverTabId(isPopoverOpen ? null : tab.id);
+                          }}
+                          title="Environment hibernating (click for details)"
+                          aria-label="Tab Status"
+                        >
+                          <Clock size={9} strokeWidth={2.4} className="railway-clock-icon" />
+                          <span className="railway-z-glyph">z</span>
+                        </button>
+                      ) : (
+                        <div
+                          className="railway-active-favicon-badge"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPopoverTabId(isPopoverOpen ? null : tab.id);
+                          }}
+                          title="Click to view tab status"
+                        >
+                          {renderTabFavicon(tab)}
+                        </div>
+                      )}
+
+                      {/* Tab Title */}
+                      <span className="railway-notch-title" title={tab.title || tab.url || 'New Tab'}>
+                        {isHibernated ? 'Environment hibernating' : title}
+                      </span>
+
+                      {/* Close Tab Button */}
+                      {tabs.length > 1 && (
+                        <button
+                          type="button"
+                          className="railway-notch-close"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            closeTab(tab.id);
+                          }}
+                          title="Close Tab"
+                          aria-label="Close Tab"
+                        >
+                          <X size={12} strokeWidth={2.4} />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Right Curved S-Wing */}
+                    <svg
+                      viewBox="0 0 18 38"
+                      className="railway-wing-svg railway-wing-right"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M 0,38 C 3,38 7,27 9,19 C 11,11 15,0 18,0 L 0,0 Z"
+                        className="railway-notch-fill"
+                      />
+                      <path
+                        d="M 0,38 C 3,38 7,27 9,19 C 11,11 15,0.5 18,0.5"
+                        className="railway-notch-stroke"
+                      />
+                    </svg>
+
+                    {/* Floating Popover Card */}
+                    {isPopoverOpen && (
+                      <div
+                        ref={popoverRef}
+                        className="railway-status-popover"
+                        role="tooltip"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <p className="railway-popover-text">
+                          {isHibernated ? (
+                            <>
+                              Your environment has been
+                              <br />
+                              scaled to zero for <strong>{tab.hibernatedDuration || '26hrs 32mins'}</strong>.
+                            </>
+                          ) : (
+                            <>
+                              Your environment is active
+                              <br />
+                              and running smoothly with low latency.
+                            </>
+                          )}
+                        </p>
+
+                        <div className="railway-popover-actions">
+                          <button
+                            type="button"
+                            className="railway-wake-link"
+                            onClick={(e) => handleWakeUp(tab.id, e)}
+                          >
+                            {isHibernated ? 'Wake up' : 'Hibernate to save memory'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                );
+              }
+
+              // Inactive Tab: Aerodynamic Parallelogram
+              const isLeft = index < activeIndex;
+              return (
+                <motion.div
+                  layout
+                  key={tab.id}
+                  initial={{ opacity: 0, scale: 0.94 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.94 }}
+                  transition={{ duration: 0.2 }}
+                  className={`railway-inactive-tab ${isLeft ? 'is-slant-left' : 'is-slant-right'}`}
+                  role="tab"
+                  aria-selected="false"
+                  onClick={() => setActiveTab(tab.id)}
                 >
-                  <path
-                    d="M 0,0 C 3,0 7,11 9,19 C 11,27 15,38 18,38 L 18,0 Z"
-                    className="railway-notch-fill"
-                  />
-                  <path
-                    d="M 0,0.5 C 3,0.5 7,11 9,19 C 11,27 15,38 18,38"
-                    className="railway-notch-stroke"
-                  />
-                </svg>
-
-                {/* Central Body of the Notch: Anchored seamlessly flush to top edge */}
-                <div className="railway-notch-body">
-                  {/* Status / Favicon Glyphs (No neon green colors, consistent palette) */}
-                  {isHibernated ? (
-                    <button
-                      type="button"
-                      className="railway-hibernation-pill"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setPopoverTabId(isPopoverOpen ? null : tab.id);
-                      }}
-                      title="Environment hibernating (click for details)"
-                      aria-label="Tab Status"
-                    >
-                      <Clock size={9} strokeWidth={2.4} className="railway-clock-icon" />
-                      <span className="railway-z-glyph">z</span>
-                    </button>
-                  ) : (
-                    <div
-                      className="railway-active-favicon-badge"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setPopoverTabId(isPopoverOpen ? null : tab.id);
-                      }}
-                      title="Click to view tab status"
-                    >
+                  <div className="tab-inner-content">
+                    {/* Site Icon */}
+                    <div className="railway-inactive-badge" aria-hidden="true">
                       {renderTabFavicon(tab)}
                     </div>
-                  )}
 
-                  {/* Tab Title */}
-                  <span className="railway-notch-title" title={tab.title || tab.url || 'New Tab'}>
-                    {isHibernated ? 'Environment hibernating' : title}
-                  </span>
+                    {/* Clean Tab Title */}
+                    <span className="railway-inactive-title">{title}</span>
 
-                  {/* Close Tab Button */}
-                  {tabs.length > 1 && (
-                    <button
-                      type="button"
-                      className="railway-notch-close"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        closeTab(tab.id);
-                      }}
-                      title="Close Tab"
-                      aria-label="Close Tab"
-                    >
-                      <X size={12} strokeWidth={2.4} />
-                    </button>
-                  )}
-                </div>
-
-                {/* Right Curved S-Wing: Compact 18px wide S-curve with zero dead filler space */}
-                <svg
-                  viewBox="0 0 18 38"
-                  className="railway-wing-svg railway-wing-right"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M 0,38 C 3,38 7,27 9,19 C 11,11 15,0 18,0 L 0,0 Z"
-                    className="railway-notch-fill"
-                  />
-                  <path
-                    d="M 0,38 C 3,38 7,27 9,19 C 11,11 15,0.5 18,0.5"
-                    className="railway-notch-stroke"
-                  />
-                </svg>
-
-                {/* Floating Popover Card: Exactly as shown in the screenshot */}
-                {isPopoverOpen && (
-                  <div
-                    ref={popoverRef}
-                    className="railway-status-popover"
-                    role="tooltip"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <p className="railway-popover-text">
-                      {isHibernated ? (
-                        <>
-                          Your environment has been
-                          <br />
-                          scaled to zero for <strong>{tab.hibernatedDuration || '26hrs 32mins'}</strong>.
-                        </>
-                      ) : (
-                        <>
-                          Your environment is active
-                          <br />
-                          and running smoothly with low latency.
-                        </>
-                      )}
-                    </p>
-
-                    <div className="railway-popover-actions">
+                    {/* Close Button */}
+                    {tabs.length > 1 && (
                       <button
                         type="button"
-                        className="railway-wake-link"
-                        onClick={(e) => handleWakeUp(tab.id, e)}
+                        className="railway-inactive-close"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          closeTab(tab.id);
+                        }}
+                        title="Close Tab"
+                        aria-label="Close Tab"
                       >
-                        {isHibernated ? 'Wake up' : 'Hibernate to save memory'}
+                        <X size={11} strokeWidth={2.2} />
                       </button>
-                    </div>
+                    )}
                   </div>
-                )}
-              </div>
-            );
-          }
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
 
-          // Inactive Tab: Aerodynamic Parallelogram (Mirrored \ on left, Forward / on right)
-          const isLeft = index < activeIndex;
-          return (
-            <div
-              key={tab.id}
-              className={`railway-inactive-tab ${isLeft ? 'is-slant-left' : 'is-slant-right'}`}
-              role="tab"
-              aria-selected="false"
-              onClick={() => setActiveTab(tab.id)}
-            >
-              <div className="tab-inner-content">
-                {/* Site Icon */}
-                <div className="railway-inactive-badge" aria-hidden="true">
-                  {renderTabFavicon(tab)}
-                </div>
-
-                {/* High-Contrast Clean Tab Title */}
-                <span className="railway-inactive-title">{title}</span>
-
-                {/* Close Button */}
-                {tabs.length > 1 && (
-                  <button
-                    type="button"
-                    className="railway-inactive-close"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      closeTab(tab.id);
-                    }}
-                    title="Close Tab"
-                    aria-label="Close Tab"
-                  >
-                    <X size={11} strokeWidth={2.2} />
-                  </button>
-                )}
-              </div>
-            </div>
-          );
-        })}
-
-        {/* New Tab Button (+) */}
-        <button
-          type="button"
-          className="railway-add-tab-btn"
-          onClick={() => openTab('', 'New Tab')}
-          title="Open New Tab"
-          aria-label="New Tab"
-        >
-          <Plus size={13} strokeWidth={2.4} />
-        </button>
-      </div>
+          {/* New Tab Button (+) inside the black island */}
+          <button
+            type="button"
+            className="railway-add-tab-btn"
+            onClick={() => openTab('', 'New Tab')}
+            title="Open New Tab"
+            aria-label="New Tab"
+          >
+            <Plus size={13} strokeWidth={2.4} />
+          </button>
+        </div>
+      </motion.div>
     </div>
   );
 };

@@ -7,6 +7,7 @@ import {
   Plus,
   Search,
   Lock,
+  Sparkles,
 } from 'lucide-react';
 import { useBrowserStore } from '../../store/useBrowserStore';
 import { isSearchQueryUrl, extractSearchQuery } from '../../services/searchEngine';
@@ -23,6 +24,8 @@ export const TopNavBar: React.FC = () => {
     goHome,
     openTab,
     navigateActiveTab,
+    activePage,
+    setActivePage,
   } = useBrowserStore();
 
   const activeTab = tabs.find((t) => t.id === activeTabId) || tabs[0];
@@ -159,25 +162,39 @@ export const TopNavBar: React.FC = () => {
           )}
         </form>
 
-        {/* Right Action Capsule Pod: New Tab & Home (Pinned to the far right) */}
-        <div className="nav-capsule-pod top-home-pod" aria-label="Page Actions">
+        {/* Right Action Group (Pinned to the far right): New Tab, Home & Agentic Chat */}
+        <div className="top-right-group" aria-label="Page and Agent Actions">
+          <div className="nav-capsule-pod top-home-pod">
+            <button
+              type="button"
+              className="nav-tool-btn"
+              onClick={() => openTab('', 'New Tab')}
+              title="New Tab (Ctrl+T)"
+              aria-label="New Tab"
+            >
+              <Plus size={15} strokeWidth={2.2} />
+            </button>
+            <button
+              type="button"
+              className="nav-tool-btn"
+              onClick={goHome}
+              title="Zen Home"
+              aria-label="Home"
+            >
+              <Home size={14} strokeWidth={2} />
+            </button>
+          </div>
+
+          {/* Dedicated Agentic Chat Screen Button */}
           <button
             type="button"
-            className="nav-tool-btn"
-            onClick={() => openTab('', 'New Tab')}
-            title="New Tab (Ctrl+T)"
-            aria-label="New Tab"
+            className={`nav-agentic-btn ${activePage === 'ai-chat' ? 'is-active' : ''}`}
+            onClick={() => setActivePage(activePage === 'ai-chat' ? 'single-browser' : 'ai-chat')}
+            title="Agentic Chat Screen"
+            aria-label="Agentic Chat"
           >
-            <Plus size={15} strokeWidth={2.2} />
-          </button>
-          <button
-            type="button"
-            className="nav-tool-btn"
-            onClick={goHome}
-            title="Zen Home"
-            aria-label="Home"
-          >
-            <Home size={14} strokeWidth={2} />
+            <Sparkles size={14} strokeWidth={2.2} className="nav-agentic-icon" />
+            <span className="nav-agentic-text">Agentic</span>
           </button>
         </div>
       </div>
