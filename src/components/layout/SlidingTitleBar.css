@@ -26,6 +26,7 @@
   z-index: 9999;
   user-select: none;
   backdrop-filter: blur(8px);
+  -webkit-app-region: drag;
 }
 
 /* Center / Left Drag Region */
@@ -45,6 +46,7 @@
   letter-spacing: 0.08em;
   color: rgba(255, 255, 255, 0.4);
   text-transform: uppercase;
+  pointer-events: none;
 }
 
 /* Window Control Buttons Pod at Far-Right (— ▢ ✕) */
@@ -52,7 +54,8 @@
   display: flex;
   align-items: center;
   height: 100%;
-  -webkit-app-region: no-drag;
+  -webkit-app-region: no-drag !important;
+  pointer-events: auto !important;
 }
 
 .sliding-control-btn {
@@ -64,7 +67,9 @@
   background: transparent;
   border: none;
   color: #e4e4e7;
-  cursor: pointer;
+  cursor: pointer !important;
+  -webkit-app-region: no-drag !important;
+  pointer-events: auto !important;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 

@@ -229,25 +229,33 @@ if (app && ipcMain && BrowserWindow && BrowserView) {
   });
 
   // Window Controls IPC
-  ipcMain.on('window:minimize', () => {
-    mainWindow?.minimize();
-  });
-
-  ipcMain.on('window:maximize', () => {
-    if (!mainWindow) return;
-    if (mainWindow.isMaximized()) {
-      mainWindow.unmaximize();
-    } else {
-      mainWindow.maximize();
+  ipcMain.on('window:minimize', (event) => {
+    const win = BrowserWindow?.fromWebContents(event.sender) || mainWindow || BrowserWindow?.getFocusedWindow();
+    if (win) {
+      win.minimize();
     }
   });
 
-  ipcMain.on('window:close', () => {
-    mainWindow?.close();
+  ipcMain.on('window:maximize', (event) => {
+    const win = BrowserWindow?.fromWebContents(event.sender) || mainWindow || BrowserWindow?.getFocusedWindow();
+    if (!win) return;
+    if (win.isMaximized()) {
+      win.unmaximize();
+    } else {
+      win.maximize();
+    }
   });
 
-  ipcMain.handle('window:is-maximized', () => {
-    return mainWindow?.isMaximized() ?? false;
+  ipcMain.on('window:close', (event) => {
+    const win = BrowserWindow?.fromWebContents(event.sender) || mainWindow || BrowserWindow?.getFocusedWindow();
+    if (win) {
+      win.close();
+    }
+  });
+
+  ipcMain.handle('window:is-maximized', (event) => {
+    const win = BrowserWindow?.fromWebContents(event.sender) || mainWindow || BrowserWindow?.getFocusedWindow();
+    return win?.isMaximized() ?? false;
   });
 
   ipcMain.on('browser:go-back', (_event, tabId?: string) => {

@@ -17,7 +17,7 @@
   min-width: 0;
   position: relative;
   overflow: hidden; /* Fully contain the island, preventing page blowout */
-  -webkit-app-region: no-drag;
+  -webkit-app-region: drag; /* Allows grabbing empty top bar space to move window */
 }
 
 /* Dynamic Width-Hugging Island with Cross Angled Trailing Edge */
@@ -37,6 +37,7 @@
   min-width: 0;
   flex-shrink: 0;
   pointer-events: auto;
+  -webkit-app-region: no-drag;
 }
 
 .top-tabs-strip {

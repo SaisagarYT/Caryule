@@ -37,6 +37,7 @@
   z-index: 20;
   overflow: hidden;
   min-width: 0;
+  -webkit-app-region: drag; /* Allows grabbing top space to move the window */
 }
 
 /* Row 2: Navigation Toolbar (< > ⟳, Omnibar Search & Actions) */
@@ -52,6 +53,7 @@
   pointer-events: auto;
   z-index: 10;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  -webkit-app-region: no-drag;
 }
 
 .is-dark-canvas .top-toolbar-row {

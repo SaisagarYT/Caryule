@@ -74,6 +74,7 @@ export const SlidingTitleBar: React.FC = () => {
 
   // Window control actions
   const handleMinimize = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     if (window.electronAPI?.minimizeWindow) {
       window.electronAPI.minimizeWindow();
@@ -81,6 +82,7 @@ export const SlidingTitleBar: React.FC = () => {
   };
 
   const handleMaximize = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     if (window.electronAPI?.maximizeWindow) {
       window.electronAPI.maximizeWindow();
@@ -90,6 +92,7 @@ export const SlidingTitleBar: React.FC = () => {
   };
 
   const handleClose = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     if (window.electronAPI?.closeWindow) {
       window.electronAPI.closeWindow();
@@ -98,14 +101,6 @@ export const SlidingTitleBar: React.FC = () => {
 
   return (
     <>
-      {/* Invisible Top Edge Hot-Zone Trigger (Detects cursor at y <= 8px) */}
-      <div
-        className="sliding-titlebar-trigger-zone"
-        onMouseEnter={handleMouseEnter}
-        onMouseOver={handleMouseEnter}
-        aria-hidden="true"
-      />
-
       {/* Sliding Black Titlebar across the entire top of the window */}
       <AnimatePresence>
         {isVisible && (
@@ -117,10 +112,11 @@ export const SlidingTitleBar: React.FC = () => {
             transition={{ type: 'spring', stiffness: 380, damping: 28 }}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
+            onDoubleClick={handleMaximize}
             aria-label="Window Titlebar"
           >
             {/* Draggable Drag Strip across the window */}
-            <div className="sliding-titlebar-drag-region">
+            <div className="sliding-titlebar-drag-region" onDoubleClick={handleMaximize}>
               <span className="sliding-titlebar-app-name">Carule</span>
             </div>
 
@@ -130,6 +126,7 @@ export const SlidingTitleBar: React.FC = () => {
                 type="button"
                 className="sliding-control-btn btn-minimize"
                 onClick={handleMinimize}
+                onMouseDown={handleMinimize}
                 title="Minimize Window"
                 aria-label="Minimize"
               >
@@ -140,6 +137,7 @@ export const SlidingTitleBar: React.FC = () => {
                 type="button"
                 className="sliding-control-btn btn-maximize"
                 onClick={handleMaximize}
+                onMouseDown={handleMaximize}
                 title={isMaximized ? 'Restore Window' : 'Maximize Window'}
                 aria-label={isMaximized ? 'Restore' : 'Maximize'}
               >
@@ -154,6 +152,7 @@ export const SlidingTitleBar: React.FC = () => {
                 type="button"
                 className="sliding-control-btn btn-close"
                 onClick={handleClose}
+                onMouseDown={handleClose}
                 title="Close Window"
                 aria-label="Close"
               >
