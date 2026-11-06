@@ -62,22 +62,22 @@
 .railway-active-notch-tab {
   display: flex;
   align-items: flex-start;
-  margin: 0 -3px; /* Pull adjacent inactive tabs flush against the wing curves */
+  margin: 0 -2px; /* Pull adjacent inactive tabs flush against the wing curves */
   position: relative;
   cursor: pointer;
   outline: none;
   z-index: 30;
   flex-shrink: 0;
-  height: 39px;
-  margin-bottom: -1px;
+  height: 38px;
+  margin-bottom: 0;
   transition: transform 0.15s ease;
   -webkit-app-region: no-drag;
 }
 
 /* Soft S-Curve Wing SVGs */
 .railway-wing-svg {
-  width: 18px;
-  height: 39px;
+  width: 16px;
+  height: 38px;
   flex-shrink: 0;
   display: block;
   overflow: visible;
@@ -110,7 +110,7 @@
 
 /* Central Body of the Notch (White color) */
 .railway-notch-body {
-  height: 39px;
+  height: 38px;
   background-color: #ffffff; /* White active body */
   border-bottom: none;
   box-shadow: none;

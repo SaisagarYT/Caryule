@@ -175,19 +175,15 @@ export const TopTabsBar: React.FC = () => {
                     tabIndex={0}
                     onClick={() => setActiveTab(tab.id)}
                   >
-                    {/* Left Curved S-Wing: Chrome-style smooth fillet flaring out onto the bottom toolbar */}
+                    {/* Left Curved Notch Wing: Flared at top ceiling, curves into rounded bottom */}
                     <svg
-                      viewBox="0 0 18 39"
+                      viewBox="0 0 16 38"
                       className="railway-wing-svg railway-wing-left"
                       aria-hidden="true"
                     >
                       <path
-                        d="M 0,39 C 9,39 9,0 18,0 L 18,39 Z"
+                        d="M 0,0 C 4,12 10,38 16,38 L 16,0 Z"
                         className="railway-notch-fill"
-                      />
-                      <path
-                        d="M 0,39 C 9,39 9,0 18,0"
-                        className="railway-notch-stroke"
                       />
                     </svg>
 
@@ -242,19 +238,15 @@ export const TopTabsBar: React.FC = () => {
                       )}
                     </div>
 
-                    {/* Right Curved S-Wing: Chrome-style smooth fillet flaring out onto the bottom toolbar */}
+                    {/* Right Curved Notch Wing: Flared at top ceiling, curves into rounded bottom */}
                     <svg
-                      viewBox="0 0 18 39"
+                      viewBox="0 0 16 38"
                       className="railway-wing-svg railway-wing-right"
                       aria-hidden="true"
                     >
                       <path
-                        d="M 0,0 C 9,0 9,39 18,39 L 0,39 Z"
+                        d="M 0,38 C 6,38 12,12 16,0 L 0,0 Z"
                         className="railway-notch-fill"
-                      />
-                      <path
-                        d="M 0,0 C 9,0 9,39 18,39"
-                        className="railway-notch-stroke"
                       />
                     </svg>
 
