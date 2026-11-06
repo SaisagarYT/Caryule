@@ -175,18 +175,18 @@ export const TopTabsBar: React.FC = () => {
                     tabIndex={0}
                     onClick={() => setActiveTab(tab.id)}
                   >
-                    {/* Left Curved S-Wing */}
+                    {/* Left Curved S-Wing: Chrome-style smooth fillet flaring out onto the bottom toolbar */}
                     <svg
-                      viewBox="0 0 18 38"
+                      viewBox="0 0 18 39"
                       className="railway-wing-svg railway-wing-left"
                       aria-hidden="true"
                     >
                       <path
-                        d="M 0,0 C 3,0 7,11 9,19 C 11,27 15,38 18,38 L 18,0 Z"
+                        d="M 0,39 C 9,39 9,0 18,0 L 18,39 Z"
                         className="railway-notch-fill"
                       />
                       <path
-                        d="M 0,0.5 C 3,0.5 7,11 9,19 C 11,27 15,38 18,38"
+                        d="M 0,39 C 9,39 9,0 18,0"
                         className="railway-notch-stroke"
                       />
                     </svg>
@@ -242,18 +242,18 @@ export const TopTabsBar: React.FC = () => {
                       )}
                     </div>
 
-                    {/* Right Curved S-Wing */}
+                    {/* Right Curved S-Wing: Chrome-style smooth fillet flaring out onto the bottom toolbar */}
                     <svg
-                      viewBox="0 0 18 38"
+                      viewBox="0 0 18 39"
                       className="railway-wing-svg railway-wing-right"
                       aria-hidden="true"
                     >
                       <path
-                        d="M 0,38 C 3,38 7,27 9,19 C 11,11 15,0 18,0 L 0,0 Z"
+                        d="M 0,0 C 9,0 9,39 18,39 L 0,39 Z"
                         className="railway-notch-fill"
                       />
                       <path
-                        d="M 0,38 C 3,38 7,27 9,19 C 11,11 15,0.5 18,0.5"
+                        d="M 0,0 C 9,0 9,39 18,39"
                         className="railway-notch-stroke"
                       />
                     </svg>
@@ -297,8 +297,7 @@ export const TopTabsBar: React.FC = () => {
                 );
               }
 
-              // Inactive Tab: Aerodynamic Parallelogram
-              const isLeft = index < activeIndex;
+              // Inactive Tab: Aerodynamic Parallelogram with uniform forward slant
               return (
                 <motion.div
                   layout
@@ -307,7 +306,7 @@ export const TopTabsBar: React.FC = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.94 }}
                   transition={{ duration: 0.2 }}
-                  className={`railway-inactive-tab ${isLeft ? 'is-slant-left' : 'is-slant-right'}`}
+                  className="railway-inactive-tab is-slant-right"
                   role="tab"
                   aria-selected="false"
                   onClick={() => setActiveTab(tab.id)}
