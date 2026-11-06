@@ -346,6 +346,15 @@
    Inactive Tab: Aerodynamic Slanted Parallelograms (Mirrored \ and Forward /)
    ========================================================================== */
 
+/* Tab Slot Wrapper: isolates layout animations so framer-motion does not erase CSS skewX */
+.railway-tab-slot {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  flex-shrink: 0;
+  padding: 0 2px;
+}
+
 .railway-inactive-tab {
   display: flex;
   align-items: center;

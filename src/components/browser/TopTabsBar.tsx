@@ -289,7 +289,8 @@ export const TopTabsBar: React.FC = () => {
                 );
               }
 
-              // Inactive Tab: Aerodynamic Parallelogram with uniform forward slant
+              // Inactive Tab: Aerodynamic Parallelogram (Mirrored \ on left, Forward / on right)
+              const isLeft = index < activeIndex;
               return (
                 <motion.div
                   layout
@@ -298,35 +299,39 @@ export const TopTabsBar: React.FC = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.94 }}
                   transition={{ duration: 0.2 }}
-                  className="railway-inactive-tab is-slant-right"
-                  role="tab"
-                  aria-selected="false"
-                  onClick={() => setActiveTab(tab.id)}
+                  className="railway-tab-slot"
                 >
-                  <div className="tab-inner-content">
-                    {/* Site Icon */}
-                    <div className="railway-inactive-badge" aria-hidden="true">
-                      {renderTabFavicon(tab)}
+                  <div
+                    className={`railway-inactive-tab ${isLeft ? 'is-slant-left' : 'is-slant-right'}`}
+                    role="tab"
+                    aria-selected="false"
+                    onClick={() => setActiveTab(tab.id)}
+                  >
+                    <div className="tab-inner-content">
+                      {/* Site Icon */}
+                      <div className="railway-inactive-badge" aria-hidden="true">
+                        {renderTabFavicon(tab)}
+                      </div>
+
+                      {/* Clean Tab Title */}
+                      <span className="railway-inactive-title">{title}</span>
+
+                      {/* Close Button */}
+                      {tabs.length > 1 && (
+                        <button
+                          type="button"
+                          className="railway-inactive-close"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            closeTab(tab.id);
+                          }}
+                          title="Close Tab"
+                          aria-label="Close Tab"
+                        >
+                          <X size={11} strokeWidth={2.2} />
+                        </button>
+                      )}
                     </div>
-
-                    {/* Clean Tab Title */}
-                    <span className="railway-inactive-title">{title}</span>
-
-                    {/* Close Button */}
-                    {tabs.length > 1 && (
-                      <button
-                        type="button"
-                        className="railway-inactive-close"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          closeTab(tab.id);
-                        }}
-                        title="Close Tab"
-                        aria-label="Close Tab"
-                      >
-                        <X size={11} strokeWidth={2.2} />
-                      </button>
-                    )}
                   </div>
                 </motion.div>
               );
