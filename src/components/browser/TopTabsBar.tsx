@@ -105,15 +105,27 @@ export const TopTabsBar: React.FC = () => {
   };
 
   const activeIndex = tabs.findIndex((t) => t.id === activeTabId);
+  const containerRef = useRef<HTMLDivElement>(null);
   const stripRef = useRef<HTMLDivElement>(null);
 
-  // Mouse wheel horizontal scrolling for tabs
-  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-    if (stripRef.current) {
-      const scrollAmount = e.deltaY !== 0 ? e.deltaY : e.deltaX;
-      stripRef.current.scrollLeft += scrollAmount;
-    }
-  };
+  // Native non-passive horizontal mouse wheel listener
+  useEffect(() => {
+    const container = containerRef.current;
+    const strip = stripRef.current;
+    if (!container || !strip) return;
+
+    const onWheel = (e: WheelEvent) => {
+      if (strip.scrollWidth > strip.clientWidth) {
+        e.preventDefault();
+        e.stopPropagation();
+        const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+        strip.scrollLeft += delta;
+      }
+    };
+
+    container.addEventListener('wheel', onWheel, { passive: false });
+    return () => container.removeEventListener('wheel', onWheel);
+  }, []);
 
   // Automatically scroll active or new tab into view
   useEffect(() => {
@@ -138,6 +150,7 @@ export const TopTabsBar: React.FC = () => {
 
   return (
     <div
+      ref={containerRef}
       className="top-tabs-container"
       role="tablist"
       aria-label="Open tabs"
@@ -151,7 +164,6 @@ export const TopTabsBar: React.FC = () => {
         <div
           ref={stripRef}
           className="top-tabs-strip"
-          onWheel={handleWheel}
         >
           <AnimatePresence initial={false}>
             {tabs.map((tab, index) => {
@@ -337,18 +349,18 @@ export const TopTabsBar: React.FC = () => {
               );
             })}
           </AnimatePresence>
-
-          {/* New Tab Button (+) inside the black island */}
-          <button
-            type="button"
-            className="railway-add-tab-btn"
-            onClick={() => openTab('', 'New Tab')}
-            title="Open New Tab"
-            aria-label="New Tab"
-          >
-            <Plus size={13} strokeWidth={2.4} />
-          </button>
         </div>
+
+        {/* New Tab Button (+) pinned inside the black island */}
+        <button
+          type="button"
+          className="railway-add-tab-btn"
+          onClick={() => openTab('', 'New Tab')}
+          title="Open New Tab"
+          aria-label="New Tab"
+        >
+          <Plus size={13} strokeWidth={2.4} />
+        </button>
       </motion.div>
     </div>
   );

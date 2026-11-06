@@ -8,6 +8,7 @@
   align-items: flex-start;
   height: 38px;
   width: 100%;
+  max-width: 100%;
   pointer-events: auto;
   user-select: none;
   z-index: 55;
@@ -15,7 +16,7 @@
   flex: 1 1 auto;
   min-width: 0;
   position: relative;
-  overflow: visible;
+  overflow: hidden; /* Fully contain the island, preventing page blowout */
   -webkit-app-region: no-drag;
 }
 
@@ -27,11 +28,13 @@
   background-color: #121214; /* Theme pitch black */
   position: relative;
   padding-left: 0;
-  padding-right: 24px; /* Clearance for the cross slant cut */
+  padding-right: 22px; /* Clearance for the cross slant cut */
   clip-path: polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   z-index: 20;
+  max-width: 100%;
+  min-width: 0;
   flex-shrink: 0;
   pointer-events: auto;
 }
@@ -41,11 +44,11 @@
   align-items: flex-start;
   gap: 2px;
   height: 100%;
-  width: auto;
+  flex: 0 1 auto;
+  min-width: 0;
   position: relative;
   overflow-x: auto;
   overflow-y: hidden;
-  scroll-behavior: smooth;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
   padding-right: 4px;
@@ -504,9 +507,7 @@
 .railway-add-tab-btn {
   width: 28px;
   height: 28px;
-  margin-top: 5px;
-  margin-left: 6px;
-  margin-right: 8px;
+  margin: 5px 6px 5px 4px;
   border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
