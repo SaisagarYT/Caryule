@@ -7,7 +7,7 @@ import {
   Plus,
   Search,
   Lock,
-  Sparkles,
+  PanelRight,
 } from 'lucide-react';
 import { useBrowserStore } from '../../store/useBrowserStore';
 import { isSearchQueryUrl, extractSearchQuery } from '../../services/searchEngine';
@@ -162,8 +162,8 @@ export const TopNavBar: React.FC = () => {
           )}
         </form>
 
-        {/* Right Action Group (Pinned to the far right): New Tab, Home & Agentic Chat */}
-        <div className="top-right-group" aria-label="Page and Agent Actions">
+        {/* Right Action Group: New Tab, Home & Sidebar Toggle attached in single pod */}
+        <div className="top-right-group" aria-label="Page Actions and Sidebar Toggle">
           <div className="nav-capsule-pod top-home-pod">
             <button
               type="button"
@@ -183,19 +183,16 @@ export const TopNavBar: React.FC = () => {
             >
               <Home size={14} strokeWidth={2} />
             </button>
+            <button
+              type="button"
+              className={`nav-tool-btn ${activePage === 'ai-chat' ? 'is-active' : ''}`}
+              onClick={() => setActivePage(activePage === 'ai-chat' ? 'single-browser' : 'ai-chat')}
+              title={activePage === 'ai-chat' ? 'Close Sidebar' : 'Open Sidebar'}
+              aria-label="Toggle Sidebar"
+            >
+              <PanelRight size={14} strokeWidth={2} />
+            </button>
           </div>
-
-          {/* Dedicated Agentic Chat Screen Button */}
-          <button
-            type="button"
-            className={`nav-agentic-btn ${activePage === 'ai-chat' ? 'is-active' : ''}`}
-            onClick={() => setActivePage(activePage === 'ai-chat' ? 'single-browser' : 'ai-chat')}
-            title="Agentic Chat Screen"
-            aria-label="Agentic Chat"
-          >
-            <Sparkles size={14} strokeWidth={2.2} className="nav-agentic-icon" />
-            <span className="nav-agentic-text">Agentic</span>
-          </button>
         </div>
       </div>
     </header>
