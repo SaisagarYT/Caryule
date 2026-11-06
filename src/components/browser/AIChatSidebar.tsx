@@ -45,8 +45,9 @@ export const AIChatSidebar: React.FC = () => {
   const [expandedResultsId, setExpandedResultsId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<Record<string, 'up' | 'down'>>({});
-  const [showFeedbackTooltip, setShowFeedbackTooltip] = useState(false);
+  const [hoveredThumbsUp, setHoveredThumbsUp] = useState(false);
 
+  // Default state matching reference image exactly
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'msg-1',
@@ -140,12 +141,6 @@ export const AIChatSidebar: React.FC = () => {
     setMessages([]);
   };
 
-  const contextLabel = activeTab?.title
-    ? activeTab.title.length > 20
-      ? `${activeTab.title.slice(0, 18)}...`
-      : activeTab.title
-    : 'Intro Call: Oğuz...';
-
   return (
     <motion.aside
       className="ai-chat-sidebar-wrapper"
@@ -162,20 +157,18 @@ export const AIChatSidebar: React.FC = () => {
         exit={{ x: 60, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 320, damping: 30 }}
       >
-        {/* Header Bar */}
+        {/* 1. Header Bar: New AI Chat dropdown + Edit, Split, Close */}
         <div className="clean-chat-header">
-          {/* Left: New AI Chat dropdown trigger */}
           <button
             type="button"
             className="clean-chat-title-btn"
             title="Chat Sessions"
             aria-label="Chat Sessions"
           >
-            <span>New AI Chat</span>
-            <ChevronDown size={13} strokeWidth={2.2} className="clean-chevron-down" />
+            <span className="clean-title-text">New AI Chat</span>
+            <ChevronDown size={12} strokeWidth={2.4} className="clean-chevron-down" />
           </button>
 
-          {/* Right Header Actions */}
           <div className="clean-header-actions">
             <button
               type="button"
@@ -184,31 +177,31 @@ export const AIChatSidebar: React.FC = () => {
               title="New Chat"
               aria-label="New Chat"
             >
-              <SquarePen size={14} strokeWidth={1.9} />
+              <SquarePen size={14} strokeWidth={1.8} />
             </button>
 
             <button
               type="button"
               className="clean-header-icon-btn"
-              title="Split View / Sidebars"
+              title="Split View"
               aria-label="Split View"
             >
-              <Columns2 size={14} strokeWidth={1.9} />
+              <Columns2 size={14} strokeWidth={1.8} />
             </button>
 
             <button
               type="button"
               className="clean-header-icon-btn clean-close-btn"
               onClick={toggleAIChatSidebar}
-              title="Close chat"
-              aria-label="Close chat"
+              title="Close Chat"
+              aria-label="Close Chat"
             >
-              <X size={14} strokeWidth={2} />
+              <X size={14} strokeWidth={1.9} />
             </button>
           </div>
         </div>
 
-        {/* Messages Thread */}
+        {/* 2. Messages Thread */}
         <div className="clean-chat-thread">
           {messages.map((m) => {
             if (m.role === 'user') {
@@ -229,7 +222,7 @@ export const AIChatSidebar: React.FC = () => {
 
             return (
               <div key={m.id} className="clean-assistant-block">
-                {/* 1. Thought Accordion Row */}
+                {/* Thought Accordion Row */}
                 {m.thoughtTime && (
                   <div className="clean-meta-accordion-wrap">
                     <button
@@ -237,11 +230,11 @@ export const AIChatSidebar: React.FC = () => {
                       className="clean-thought-row"
                       onClick={() => setExpandedThoughtId(isThoughtOpen ? null : m.id)}
                     >
-                      <Lightbulb size={13} strokeWidth={2} className="clean-meta-icon" />
+                      <Lightbulb size={13} strokeWidth={1.8} className="clean-meta-icon" />
                       <span className="clean-meta-label">{m.thoughtTime}</span>
                       <ChevronRight
-                        size={12}
-                        strokeWidth={2}
+                        size={11}
+                        strokeWidth={2.2}
                         className={`clean-meta-arrow ${isThoughtOpen ? 'is-open' : ''}`}
                       />
                     </button>
@@ -262,7 +255,7 @@ export const AIChatSidebar: React.FC = () => {
                   </div>
                 )}
 
-                {/* 2. Results / Sources Accordion Row */}
+                {/* Results / Sources Accordion Row */}
                 {m.resultsCount && (
                   <div className="clean-meta-accordion-wrap">
                     <button
@@ -270,25 +263,31 @@ export const AIChatSidebar: React.FC = () => {
                       className="clean-results-row"
                       onClick={() => setExpandedResultsId(isResultsOpen ? null : m.id)}
                     >
-                      <Search size={13} strokeWidth={2} className="clean-meta-icon" />
+                      <Search size={13} strokeWidth={1.8} className="clean-meta-icon" />
                       <span className="clean-meta-label">{m.resultsCount} results</span>
 
                       {/* Source Icons Group */}
                       <div className="clean-source-badges">
-                        <span className="clean-badge-icon badge-black">F</span>
-                        <span className="clean-badge-avatar">
+                        <span className="clean-badge-square-icon" title="Workspace source">
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M4 4h16v16H4z" />
+                          </svg>
+                        </span>
+                        <span className="clean-badge-avatar" title="Contact reference">
                           <img
                             src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=48&auto=format&fit=crop&q=80"
                             alt="source"
                             className="clean-avatar-img"
                           />
                         </span>
-                        <span className="clean-badge-count">3</span>
+                        <span className="clean-badge-count-pill">
+                          <span className="clean-badge-count-text">3</span>
+                        </span>
                       </div>
 
                       <ChevronRight
-                        size={12}
-                        strokeWidth={2}
+                        size={11}
+                        strokeWidth={2.2}
                         className={`clean-meta-arrow ${isResultsOpen ? 'is-open' : ''}`}
                       />
                     </button>
@@ -311,9 +310,10 @@ export const AIChatSidebar: React.FC = () => {
                   </div>
                 )}
 
-                {/* 3. Message Text & Structure */}
+                {/* Main Message Intro Text */}
                 {m.text && <p className="clean-assistant-intro">{m.text}</p>}
 
+                {/* Numbered Sections & Bullets */}
                 {m.sections?.map((sec, sIdx) => (
                   <div key={sIdx} className="clean-assistant-section">
                     {sec.title && <h3 className="clean-section-title">{sec.title}</h3>}
@@ -330,14 +330,14 @@ export const AIChatSidebar: React.FC = () => {
                   </div>
                 ))}
 
-                {/* 4. Action Toolbar */}
+                {/* Action Toolbar */}
                 <div className="clean-actions-toolbar">
                   <button
                     type="button"
                     className="clean-action-text-btn"
                     title="Insert to document or draft"
                   >
-                    <CornerUpLeft size={12} strokeWidth={2.2} />
+                    <CornerUpLeft size={11} strokeWidth={2.2} />
                     <span>Insert</span>
                   </button>
 
@@ -349,14 +349,14 @@ export const AIChatSidebar: React.FC = () => {
                     onClick={() => handleCopy(m.id, `${m.text}\n${m.sections?.map(s => s.bullets?.join('\n')).join('\n')}`)}
                     title={isCopied ? 'Copied!' : 'Copy to clipboard'}
                   >
-                    {isCopied ? <Check size={12} className="text-emerald-600" /> : <Copy size={12} strokeWidth={2} />}
+                    {isCopied ? <Check size={12} className="text-emerald-600" /> : <Copy size={12} strokeWidth={1.8} />}
                   </button>
 
-                  {/* Thumbs Up with Share feedback Tooltip */}
+                  {/* Thumbs Up with Floating "Share feedback" Tooltip */}
                   <div
                     className="clean-action-tooltip-anchor"
-                    onMouseEnter={() => setShowFeedbackTooltip(true)}
-                    onMouseLeave={() => setShowFeedbackTooltip(false)}
+                    onMouseEnter={() => setHoveredThumbsUp(true)}
+                    onMouseLeave={() => setHoveredThumbsUp(false)}
                   >
                     <button
                       type="button"
@@ -364,12 +364,24 @@ export const AIChatSidebar: React.FC = () => {
                       onClick={() => handleFeedback(m.id, 'up')}
                       title="Good response"
                     >
-                      <ThumbsUp size={12} strokeWidth={2} />
+                      <ThumbsUp size={12} strokeWidth={1.8} />
                     </button>
 
-                    {showFeedbackTooltip && (
-                      <div className="clean-floating-tooltip">Share feedback</div>
-                    )}
+                    {/* Floating Tooltip matching reference screenshot */}
+                    <AnimatePresence>
+                      {hoveredThumbsUp && (
+                        <motion.div
+                          className="clean-floating-tooltip"
+                          initial={{ opacity: 0, y: 4, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 4, scale: 0.95 }}
+                          transition={{ duration: 0.15 }}
+                        >
+                          Share feedback
+                          <div className="clean-tooltip-arrow" />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
 
                   <button
@@ -378,7 +390,7 @@ export const AIChatSidebar: React.FC = () => {
                     onClick={() => handleFeedback(m.id, 'down')}
                     title="Poor response"
                   >
-                    <ThumbsDown size={12} strokeWidth={2} />
+                    <ThumbsDown size={12} strokeWidth={1.8} />
                   </button>
 
                   <button
@@ -386,7 +398,7 @@ export const AIChatSidebar: React.FC = () => {
                     className="clean-action-icon-btn"
                     title="Regenerate response"
                   >
-                    <RotateCw size={12} strokeWidth={2} />
+                    <RotateCw size={12} strokeWidth={1.8} />
                   </button>
                 </div>
               </div>
@@ -396,7 +408,7 @@ export const AIChatSidebar: React.FC = () => {
           {isTyping && (
             <div className="clean-assistant-block">
               <div className="clean-thought-row">
-                <Lightbulb size={13} strokeWidth={2} className="clean-meta-icon animate-pulse" />
+                <Lightbulb size={13} strokeWidth={1.8} className="clean-meta-icon animate-pulse" />
                 <span className="clean-meta-label">Thinking...</span>
               </div>
             </div>
@@ -404,7 +416,7 @@ export const AIChatSidebar: React.FC = () => {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Floating Composer Card */}
+        {/* 3. Floating Rounded Composer Card */}
         <div className="clean-composer-wrapper">
           <form
             className="clean-composer-card"
@@ -413,31 +425,31 @@ export const AIChatSidebar: React.FC = () => {
               handleSend();
             }}
           >
-            {/* Row 1: Context tags */}
+            {/* Top Row: @ + Context Pill */}
             <div className="clean-composer-top-row">
               <button
                 type="button"
                 className="clean-at-btn"
-                title="Mention context or files"
+                title="Mention context"
                 aria-label="Add context"
               >
                 @
               </button>
 
-              <div className="clean-context-pill" title={activeTab?.url || 'Workspace Context'}>
-                <span className="clean-pill-avatar">
+              <div className="clean-context-pill" title="Intro Call: Oğuz...">
+                <span className="clean-pill-avatar-wrap">
                   <img
                     src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=48&auto=format&fit=crop&q=80"
                     alt="avatar"
-                    className="clean-pill-img"
+                    className="clean-pill-avatar-img"
                   />
-                  <span className="clean-pill-badge">3</span>
+                  <span className="clean-pill-badge-num">3</span>
                 </span>
-                <span className="clean-pill-text">{contextLabel}</span>
+                <span className="clean-pill-text">Intro Call: Oğuz...</span>
               </div>
             </div>
 
-            {/* Row 2: Text input */}
+            {/* Middle Row: Clean Input */}
             <div className="clean-composer-input-row">
               <input
                 ref={inputRef}
@@ -449,7 +461,7 @@ export const AIChatSidebar: React.FC = () => {
               />
             </div>
 
-            {/* Row 3: Bottom tools */}
+            {/* Bottom Row: Paperclip, divider, Auto, and circular Send button */}
             <div className="clean-composer-bottom-row">
               <div className="clean-composer-tools-left">
                 <button
@@ -458,13 +470,13 @@ export const AIChatSidebar: React.FC = () => {
                   title="Attach file"
                   aria-label="Attach file"
                 >
-                  <Paperclip size={13} strokeWidth={2} />
+                  <Paperclip size={13} strokeWidth={1.8} />
                 </button>
                 <span className="clean-tool-divider" />
                 <button
                   type="button"
                   className="clean-model-btn"
-                  title="Model selection"
+                  title="Model"
                 >
                   Auto
                 </button>

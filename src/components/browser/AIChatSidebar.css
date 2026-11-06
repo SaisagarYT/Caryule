@@ -1,4 +1,7 @@
-/* Sliding Agentic Chat Sidebar Drawer */
+/* ==========================================================================
+   Clean Agentic Chat Drawer - Pixel Perfect to Reference Design
+   ========================================================================== */
+
 .ai-chat-sidebar-wrapper {
   position: relative;
   height: 100%;
@@ -11,12 +14,12 @@
   padding: 10px 10px 10px 0;
 }
 
-/* Main Clean Chat Card */
+/* Main Clean Card */
 .ai-chat-sidebar-card.clean-chat-theme {
   width: 380px;
   min-width: 380px;
   height: 100%;
-  background-color: #ffffff;
+  background-color: #faf9fd;
   border-radius: 16px;
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0 10px 32px rgba(0, 0, 0, 0.12);
@@ -36,29 +39,31 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #ffffff;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  background-color: #faf9fd;
   flex-shrink: 0;
   user-select: none;
 }
 
 .clean-chat-title-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   background: transparent;
   border: none;
-  font-size: 13.5px;
-  font-weight: 500;
-  color: #18181b;
   cursor: pointer;
-  padding: 4px 6px;
-  border-radius: 6px;
-  transition: background-color 0.15s ease;
+  padding: 4px 0;
+  transition: opacity 0.15s ease;
 }
 
 .clean-chat-title-btn:hover {
-  background-color: #f4f4f5;
+  opacity: 0.8;
+}
+
+.clean-title-text {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #18181b;
+  letter-spacing: -0.01em;
 }
 
 .clean-chevron-down {
@@ -68,7 +73,7 @@
 .clean-header-actions {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
 }
 
 .clean-header-icon-btn {
@@ -86,7 +91,7 @@
 }
 
 .clean-header-icon-btn:hover {
-  background-color: #f4f4f5;
+  background-color: rgba(0, 0, 0, 0.04);
   color: #18181b;
 }
 
@@ -101,11 +106,11 @@
 .clean-chat-thread {
   flex: 1;
   overflow-y: auto;
-  padding: 16px 18px;
+  padding: 12px 18px 8px 18px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  background-color: #ffffff;
+  gap: 16px;
+  background-color: #faf9fd;
 }
 
 /* User Bubble (Right Aligned, Rounded Pill) */
@@ -116,10 +121,10 @@
 }
 
 .clean-user-bubble {
-  max-width: 85%;
-  background-color: #f3f4f6;
+  max-width: 86%;
+  background-color: #ebe9f1;
   color: #1f1f23;
-  padding: 8px 16px;
+  padding: 8px 15px;
   border-radius: 20px;
   font-size: 13px;
   line-height: 1.45;
@@ -135,20 +140,8 @@
 .clean-assistant-block {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
-  animation: cleanFadeIn 0.2s ease-out;
-}
-
-@keyframes cleanFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(3px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* Thought & Results Meta Accordion Rows */
@@ -165,8 +158,8 @@
   background: transparent;
   border: none;
   padding: 2px 0;
-  font-size: 12px;
-  color: #71717a;
+  font-size: 12.5px;
+  color: #858393;
   cursor: pointer;
   user-select: none;
   width: fit-content;
@@ -179,12 +172,12 @@
 }
 
 .clean-meta-icon {
-  color: #71717a;
+  color: #858393;
   flex-shrink: 0;
 }
 
 .clean-meta-label {
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: -0.01em;
 }
 
@@ -203,7 +196,7 @@
   overflow: hidden;
   padding: 6px 12px;
   margin-top: 4px;
-  background-color: #f8fafc;
+  background-color: rgba(255, 255, 255, 0.7);
   border-left: 2px solid #cbd5e1;
   border-radius: 4px;
   font-size: 11.5px;
@@ -223,24 +216,20 @@
 .clean-source-badges {
   display: inline-flex;
   align-items: center;
-  margin: 0 2px;
+  margin: 0 4px;
 }
 
-.clean-badge-icon {
+.clean-badge-square-icon {
   width: 16px;
   height: 16px;
   border-radius: 4px;
+  background-color: #18181b;
+  color: #ffffff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 9px;
-  font-weight: 700;
-  border: 1px solid #ffffff;
-}
-
-.clean-badge-icon.badge-black {
-  background-color: #18181b;
-  color: #ffffff;
+  border: 1px solid #faf9fd;
+  flex-shrink: 0;
 }
 
 .clean-badge-avatar {
@@ -248,9 +237,10 @@
   height: 16px;
   border-radius: 50%;
   overflow: hidden;
-  margin-left: -5px;
-  border: 1px solid #ffffff;
+  margin-left: -4px;
+  border: 1px solid #faf9fd;
   display: inline-flex;
+  flex-shrink: 0;
 }
 
 .clean-avatar-img {
@@ -259,19 +249,31 @@
   object-fit: cover;
 }
 
-.clean-badge-count {
-  font-size: 10px;
+.clean-badge-count-pill {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #e4e3ea;
+  border: 1px solid #faf9fd;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -4px;
+  flex-shrink: 0;
+}
+
+.clean-badge-count-text {
+  font-size: 9.5px;
   font-weight: 600;
-  color: #71717a;
-  margin-left: 4px;
+  color: #52525b;
 }
 
 /* Assistant Message Typography */
 .clean-assistant-intro {
   font-size: 13px;
-  line-height: 1.6;
+  line-height: 1.55;
   color: #18181b;
-  margin: 2px 0 6px 0;
+  margin: 4px 0 2px 0;
 }
 
 .clean-assistant-section {
@@ -284,7 +286,7 @@
   font-size: 13px;
   font-weight: 600;
   color: #18181b;
-  margin: 4px 0 0 0;
+  margin: 6px 0 0 0;
 }
 
 .clean-bullets-list {
@@ -293,7 +295,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
 }
 
 .clean-bullet-item {
@@ -323,7 +325,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  margin-top: 6px;
+  margin-top: 4px;
   padding-top: 4px;
   user-select: none;
 }
@@ -344,15 +346,15 @@
 }
 
 .clean-action-text-btn:hover {
-  background-color: #f4f4f5;
+  background-color: rgba(0, 0, 0, 0.04);
   color: #18181b;
 }
 
 .clean-action-divider {
   width: 1px;
-  height: 13px;
-  background-color: #e4e4e7;
-  margin: 0 3px;
+  height: 12px;
+  background-color: #dcdbe3;
+  margin: 0 2px;
 }
 
 .clean-action-icon-btn {
@@ -370,7 +372,7 @@
 }
 
 .clean-action-icon-btn:hover {
-  background-color: #f4f4f5;
+  background-color: rgba(0, 0, 0, 0.04);
   color: #18181b;
 }
 
@@ -379,7 +381,7 @@
   background-color: #e0f2fe;
 }
 
-/* Floating Share feedback Tooltip */
+/* Floating Share feedback Tooltip matching reference screenshot */
 .clean-action-tooltip-anchor {
   position: relative;
   display: inline-flex;
@@ -387,10 +389,10 @@
 
 .clean-floating-tooltip {
   position: absolute;
-  bottom: calc(100% + 6px);
+  bottom: calc(100% + 7px);
   left: 50%;
   transform: translateX(-50%);
-  background-color: #4b4453;
+  background-color: #4a4453;
   color: #ffffff;
   font-size: 10.5px;
   font-weight: 500;
@@ -398,20 +400,20 @@
   border-radius: 6px;
   white-space: nowrap;
   pointer-events: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  animation: cleanFadeIn 0.15s ease-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   z-index: 10;
 }
 
-.clean-floating-tooltip::after {
-  content: '';
+.clean-tooltip-arrow {
   position: absolute;
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  border-width: 4px;
-  border-style: solid;
-  border-color: #4b4453 transparent transparent transparent;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #4a4453;
 }
 
 /* ==========================================================================
@@ -419,15 +421,15 @@
    ========================================================================== */
 .clean-composer-wrapper {
   padding: 8px 14px 14px 14px;
-  background-color: #ffffff;
+  background-color: #faf9fd;
   flex-shrink: 0;
 }
 
 .clean-composer-card {
   background-color: #ffffff;
-  border: 1px solid #e4e4e7;
-  border-radius: 18px;
-  padding: 10px 14px 8px 14px;
+  border: 1px solid #e2e1e7;
+  border-radius: 20px;
+  padding: 10px 14px 10px 14px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
   display: flex;
   flex-direction: column;
@@ -436,8 +438,8 @@
 }
 
 .clean-composer-card:focus-within {
-  border-color: #d4d4d8;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+  border-color: #c8c6d1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 /* Row 1: Context tags */
@@ -452,7 +454,7 @@
   border: none;
   font-size: 13.5px;
   font-weight: 500;
-  color: #71717a;
+  color: #858393;
   cursor: pointer;
   padding: 0;
   line-height: 1;
@@ -467,8 +469,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 8px 3px 4px;
-  background-color: #f4f4f5;
+  padding: 2px 8px 2px 4px;
+  background-color: #f2f1f6;
   border-radius: 12px;
   font-size: 11.5px;
   font-weight: 500;
@@ -476,20 +478,21 @@
   max-width: calc(100% - 30px);
 }
 
-.clean-pill-avatar {
+.clean-pill-avatar-wrap {
   position: relative;
   display: inline-flex;
+  align-items: center;
 }
 
-.clean-pill-img {
-  width: 16px;
-  height: 16px;
+.clean-pill-avatar-img {
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   object-fit: cover;
 }
 
-.clean-pill-badge {
-  font-size: 9px;
+.clean-pill-badge-num {
+  font-size: 9.5px;
   font-weight: 600;
   color: #71717a;
   margin-left: 2px;
@@ -511,13 +514,13 @@
   border: none;
   outline: none;
   background: transparent;
-  font-size: 13px;
+  font-size: 12.5px;
   color: #18181b;
   padding: 2px 0;
 }
 
 .clean-composer-input::placeholder {
-  color: #a1a1aa;
+  color: #9a98a6;
   font-size: 12.5px;
 }
 
@@ -526,7 +529,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 4px;
+  padding-top: 2px;
 }
 
 .clean-composer-tools-left {
@@ -538,7 +541,7 @@
 .clean-tool-btn {
   background: transparent;
   border: none;
-  color: #71717a;
+  color: #9a98a6;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -554,14 +557,14 @@
 .clean-tool-divider {
   width: 1px;
   height: 12px;
-  background-color: #e4e4e7;
+  background-color: #e0dfe5;
 }
 
 .clean-model-btn {
   background: transparent;
   border: none;
   font-size: 11.5px;
-  color: #71717a;
+  color: #9a98a6;
   font-weight: 500;
   cursor: pointer;
   padding: 0;
@@ -581,8 +584,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f4f4f5;
-  color: #a1a1aa;
+  background-color: #f3f2f6;
+  color: #9a98a6;
   cursor: default;
   transition: all 0.15s ease;
 }
