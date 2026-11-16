@@ -140,7 +140,7 @@ export const TopNavBar: React.FC = () => {
         {/* Google-style Search & Address Bar: Occupies all remaining available width */}
         <form onSubmit={handleSubmit} className="top-search-bar">
           {isSecure ? (
-            <Lock size={13} strokeWidth={2.2} className="top-search-icon text-emerald-400" />
+            <Lock size={13} strokeWidth={2.2} className="top-search-icon" />
           ) : (
             <Search size={14} strokeWidth={2.2} className="top-search-icon" />
           )}

@@ -40,7 +40,7 @@ export const ZenNewTab: React.FC = () => {
     { id: 'fast', label: 'Fast', icon: <Zap size={14} className="text-amber-500" /> },
     { id: 'in-depth', label: 'In-depth', icon: <CircleDashed size={14} className="text-blue-500" /> },
     { id: 'magic', label: 'Magic AI', icon: <Wand2 size={14} className="text-purple-500" /> },
-    { id: 'holistic', label: 'Holistic', icon: <Boxes size={14} className="text-emerald-500" /> },
+    { id: 'holistic', label: 'Holistic', icon: <Boxes size={14} className="text-zinc-400" /> },
   ];
 
   return (

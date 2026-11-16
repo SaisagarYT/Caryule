@@ -616,7 +616,7 @@ export const SearchResultsView: React.FC<SearchResultsViewProps> = ({ url }) => 
                     1600 Amphitheatre Pkwy, Mountain View, CA 94043
                   </p>
                   <p className="search-map-status">
-                    <span className="text-emerald-600 font-medium">Open now</span> · Closes
+                    <span className="font-medium text-zinc-300">Open now</span> · Closes
                     9:00 PM
                   </p>
 

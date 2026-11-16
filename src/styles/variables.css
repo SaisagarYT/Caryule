@@ -36,12 +36,12 @@
   --font-family: var(--font-system);
   --font-mono: "JetBrains Mono", "Cascadia Code", ui-monospace, monospace;
 
-  /* 4. Taste Code Accent Themes (Forest / Emerald System) */
-  --attention: #71c695;
-  --attention-subtle: rgba(113, 198, 149, 0.14);
-  --attention-border: rgba(113, 198, 149, 0.28);
-  --file-reference: #62aa84;
-  --effort: #8bc47a;
+  /* 4. Taste Code Accent Tokens (Refined Neutral Monochrome & Slate Hierarchy) */
+  --attention: #f4f4f6;
+  --attention-subtle: rgba(255, 255, 255, 0.08);
+  --attention-border: rgba(255, 255, 255, 0.16);
+  --file-reference: #a1a1aa;
+  --effort: #d4d4d8;
   --warning: #f59e0b;
   --warning-subtle: rgba(245, 158, 11, 0.14);
   --warning-border: rgba(245, 158, 11, 0.28);
@@ -107,9 +107,11 @@
   --text: #18181b;
   --text-2: #52525b;
   --text-3: #71717a;
-  --attention: #107548;
-  --attention-subtle: #e9f8f1;
-  --attention-border: rgba(16, 117, 72, 0.22);
+  --attention: #18181b;
+  --attention-subtle: rgba(24, 24, 27, 0.06);
+  --attention-border: rgba(24, 24, 27, 0.16);
+  --file-reference: #52525b;
+  --effort: #27272a;
   --warning: #d97706;
   --warning-subtle: #fef3c7;
   --warning-border: rgba(217, 119, 6, 0.22);

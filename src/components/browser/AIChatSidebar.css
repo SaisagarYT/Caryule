@@ -1218,7 +1218,7 @@
   border-radius: 4px;
 }
 
-.badge-emerald {
+.badge-neutral {
   background-color: var(--attention-subtle);
   color: var(--attention);
   border: 1px solid var(--attention-border);

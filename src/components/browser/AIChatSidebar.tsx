@@ -71,7 +71,7 @@ const MODEL_OPTIONS: ModelOption[] = [
     value: 'magic',
     name: 'Auto (Magic)',
     badge: 'Default',
-    badgeColor: 'badge-emerald',
+    badgeColor: 'badge-neutral',
     description: 'Dynamic intelligence, auto-selects optimal model',
     icon: Sparkles,
   },
@@ -784,7 +784,7 @@ export const AIChatSidebar: React.FC = () => {
                     }}
                     title={isCopied ? 'Copied!' : 'Copy to clipboard'}
                   >
-                    {isCopied ? <Check size={12} className="text-emerald-600" /> : <Copy size={12} strokeWidth={1.8} />}
+                    {isCopied ? <Check size={12} className="text-zinc-200" /> : <Copy size={12} strokeWidth={1.8} />}
                   </button>
 
                   {/* Thumbs Up with Floating "Share feedback" Tooltip */}
@@ -955,7 +955,7 @@ export const AIChatSidebar: React.FC = () => {
                         setShowContextPicker(false);
                       }}
                     >
-                      <Table2 size={13} className="text-emerald-600 shrink-0" />
+                      <Table2 size={13} className="text-zinc-400 shrink-0" />
                       <span>Competitor Analysis (Page Elements)</span>
                     </button>
                     <button
@@ -1082,7 +1082,7 @@ export const AIChatSidebar: React.FC = () => {
                       className="prompt-tool-pill-btn prompt-model-select-trigger"
                       aria-label="Select Intelligence Model"
                     >
-                      <Sparkles size={12} className="text-emerald-600 shrink-0" />
+                      <Sparkles size={12} className="text-zinc-400 shrink-0" />
                       <Select.Value>
                         <span>{currentModelLabel}</span>
                       </Select.Value>
@@ -1130,7 +1130,7 @@ export const AIChatSidebar: React.FC = () => {
                                 </div>
 
                                 <Select.ItemIndicator className="prompt-model-indicator">
-                                  <Check size={13} className="text-emerald-600 stroke-[2.5]" />
+                                  <Check size={13} className="text-zinc-200 stroke-[2.5]" />
                                 </Select.ItemIndicator>
                               </Select.Item>
                             );

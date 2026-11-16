@@ -41,7 +41,7 @@ export const ProfilePage: React.FC = () => {
                   <div className="profile-theme-card-top">
                     <Moon size={16} />
                     <span className="profile-theme-card-title">Dark Mode</span>
-                    {theme === 'dark' && <Check size={14} className="ml-auto text-emerald-400" />}
+                    {theme === 'dark' && <Check size={14} className="ml-auto text-zinc-200" />}
                   </div>
                   <p className="profile-theme-card-desc">Lifted graphite surfaces with subtle tactile borders and low eye-strain.</p>
                 </button>
@@ -54,7 +54,7 @@ export const ProfilePage: React.FC = () => {
                   <div className="profile-theme-card-top">
                     <Sun size={16} />
                     <span className="profile-theme-card-title">Light Mode</span>
-                    {theme === 'light' && <Check size={14} className="ml-auto text-emerald-600" />}
+                    {theme === 'light' && <Check size={14} className="ml-auto text-zinc-800" />}
                   </div>
                   <p className="profile-theme-card-desc">Luminous, high-contrast Swiss-grid surfaces for daytime productivity.</p>
                 </button>
