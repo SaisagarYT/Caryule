@@ -11,7 +11,30 @@ const defaultTab: Tab = {
   isAgentActive: false,
 };
 
+const getStoredTheme = (): 'dark' | 'light' => {
+  if (typeof window !== 'undefined') {
+    try {
+      const saved = localStorage.getItem('carule-theme');
+      if (saved === 'dark' || saved === 'light') {
+        document.documentElement.setAttribute('data-theme', saved);
+        return saved;
+      }
+    } catch {
+      // ignore
+    }
+  }
+  if (typeof document !== 'undefined') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+  return 'dark';
+};
+
+const initialTheme = getStoredTheme();
+
 export const useBrowserStore = create<BrowserStoreState>((set, get) => ({
+  // Theme
+  theme: initialTheme,
+
   // Active Navigation Page
   activePage: 'single-browser',
 
@@ -255,6 +278,28 @@ export const useBrowserStore = create<BrowserStoreState>((set, get) => ({
     set({ isAIChatSidebarOpen: open }),
 
   setSelectedModel: (model) => set({ selectedModel: model }),
+
+  toggleTheme: () => {
+    const current = get().theme;
+    const next = current === 'dark' ? 'light' : 'dark';
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', next);
+    }
+    try {
+      localStorage.setItem('carule-theme', next);
+    } catch {}
+    set({ theme: next });
+  },
+
+  setTheme: (theme: 'dark' | 'light') => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+    try {
+      localStorage.setItem('carule-theme', theme);
+    } catch {}
+    set({ theme });
+  },
 
   toggleOmnibar: (open) =>
     set((state) => ({

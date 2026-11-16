@@ -7,7 +7,7 @@
   justify-content: center;
   padding: 40px 24px;
   background-color: var(--canvas-bg);
-  color: #171717;
+  color: var(--text);
   user-select: none;
   position: relative;
   overflow-y: auto;
@@ -19,16 +19,16 @@
   left: 20px;
   display: flex;
   gap: 12px;
-  color: #737373;
+  color: var(--text-3);
 }
 
 .zen-action-btn {
   background: transparent;
   border: none;
-  color: #737373;
+  color: var(--text-3);
   cursor: pointer;
   padding: 6px;
-  border-radius: 8px;
+  border-radius: var(--r-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,8 +36,8 @@
 }
 
 .zen-action-btn:hover {
-  color: #171717;
-  background-color: #f5f5f5;
+  color: var(--text);
+  background-color: var(--control-hover);
 }
 
 .zen-center-content {
@@ -53,7 +53,7 @@
 .zen-logo {
   width: 44px;
   height: 44px;
-  color: #171717;
+  color: var(--text);
   margin-bottom: 2px;
 }
 
@@ -61,14 +61,14 @@
   font-size: 28px;
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: #171717;
+  color: var(--text);
   margin: 0;
   text-align: center;
 }
 
 .zen-subheading {
   font-size: 14px;
-  color: #737373;
+  color: var(--text-3);
   margin: -10px 0 6px 0;
   text-align: center;
 }
@@ -76,10 +76,10 @@
 /* Floating Prompt Box */
 .zen-prompt-card {
   width: 100%;
-  background: #ffffff;
-  border: 1px solid #e5e5e5;
-  border-radius: 18px;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+  background: var(--surface);
+  border: 1px solid var(--chrome-border);
+  border-radius: var(--r-card);
+  box-shadow: var(--composer-shadow);
   padding: 16px 18px 12px 18px;
   display: flex;
   flex-direction: column;
@@ -88,8 +88,8 @@
 }
 
 .zen-prompt-card:focus-within {
-  border-color: #a3a3a3;
-  box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.09), 0 0 0 1px #a3a3a3;
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-flyout);
 }
 
 .zen-prompt-input {
@@ -97,14 +97,14 @@
   border: none;
   outline: none;
   font-size: 15px;
-  color: #171717;
+  color: var(--text);
   background: transparent;
   font-family: inherit;
   resize: none;
 }
 
 .zen-prompt-input::placeholder {
-  color: #a3a3a3;
+  color: var(--text-3);
 }
 
 .zen-prompt-toolbar {
@@ -125,18 +125,19 @@
   align-items: center;
   gap: 5px;
   padding: 5px 10px;
-  background: #f5f5f5;
-  border: 1px solid #ebebeb;
-  border-radius: 20px;
+  background: var(--surface-2);
+  border: 1px solid var(--chrome-border);
+  border-radius: var(--r-circle);
   font-size: 12px;
-  color: #525252;
+  color: var(--text-2);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .zen-tool-pill:hover {
-  background: #ebebeb;
-  color: #171717;
+  background: var(--surface-3);
+  color: var(--text);
+  border-color: var(--line-strong);
 }
 
 .zen-toolbar-right {
@@ -150,13 +151,19 @@
   align-items: center;
   gap: 6px;
   padding: 5px 12px;
-  background: #f7f7f7;
-  border: 1px solid #e5e5e5;
-  border-radius: 20px;
+  background: var(--surface-2);
+  border: 1px solid var(--chrome-border);
+  border-radius: var(--r-circle);
   font-size: 12px;
   font-weight: 500;
-  color: #171717;
+  color: var(--text);
   cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.zen-model-pill:hover {
+  background: var(--surface-3);
+  border-color: var(--line-strong);
 }
 
 /* Quick Model Chips */
@@ -173,25 +180,24 @@
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
-  background: #ffffff;
-  border: 1px solid #e5e5e5;
-  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--chrome-border);
+  border-radius: var(--r-lg);
   font-size: 12px;
   font-weight: 500;
-  color: #525252;
+  color: var(--text-2);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .zen-chip:hover {
-  border-color: #a3a3a3;
-  color: #171717;
+  border-color: var(--line-strong);
+  color: var(--text);
   transform: translateY(-1px);
 }
 
 .zen-chip.is-active {
-  background: #171717;
-  color: #ffffff;
-  border-color: #171717;
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
 }
-

@@ -17,7 +17,7 @@
   min-width: 0;
   position: relative;
   overflow: hidden; /* Fully contain the island, preventing page blowout */
-  -webkit-app-region: drag; /* Allows grabbing empty top bar space to move window */
+  -webkit-app-region: no-drag;
 }
 
 /* Dynamic Width-Hugging Island with Cross Angled Trailing Edge */
@@ -25,13 +25,13 @@
   display: inline-flex;
   align-items: flex-start;
   height: 38px;
-  background-color: #121214; /* Theme pitch black */
+  background-color: var(--bg-rail);
   position: relative;
   padding-left: 0;
   padding-right: 22px; /* Clearance for the cross slant cut */
   clip-path: polygon(0 0, 100% 0, calc(100% - 15px) 100%, 0 100%);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--chrome-border);
   z-index: 20;
   max-width: 100%;
   min-width: 0;
@@ -96,7 +96,7 @@
 }
 
 .railway-notch-fill {
-  fill: #ffffff; /* White active wings */
+  fill: var(--canvas-bg); /* Active wings */
 }
 
 .railway-notch-stroke {
@@ -104,18 +104,18 @@
 }
 
 .railway-baseline-stroke {
-  stroke: rgba(0, 0, 0, 0.12);
+  stroke: var(--chrome-border);
   stroke-width: 1px;
 }
 
 .is-dark-canvas .railway-baseline-stroke {
-  stroke: rgba(255, 255, 255, 0.14);
+  stroke: var(--chrome-border);
 }
 
-/* Central Body of the Notch (White color) */
+/* Central Body of the Notch */
 .railway-notch-body {
   height: 38px;
-  background-color: #ffffff; /* White active body */
+  background-color: var(--canvas-bg); /* Active body */
   border-bottom: none;
   box-shadow: none;
   display: flex;
@@ -138,15 +138,15 @@
   cursor: pointer;
 }
 
-/* Hibernation Pill (Exact match to reference image purple clock ring) */
+/* Hibernation Pill */
 .railway-hibernation-pill {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  border: 1.5px solid #818cf8;
-  background-color: rgba(99, 102, 241, 0.22);
-  color: #c7d2fe;
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+  border: 1.5px solid var(--accent-purple);
+  background-color: color-mix(in srgb, var(--accent-purple) 22%, transparent);
+  color: var(--accent-purple);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent-purple) 30%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -163,7 +163,7 @@
 }
 
 .railway-clock-icon {
-  color: #e0e7ff;
+  color: var(--accent-purple);
 }
 
 .railway-z-glyph {
@@ -172,7 +172,7 @@
   position: absolute;
   top: -2px;
   right: -2px;
-  color: #e0e7ff;
+  color: var(--accent-purple);
   line-height: 1;
 }
 
@@ -207,11 +207,11 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background-color: #71717a;
+  background-color: var(--text-3);
 }
 
 .railway-active-notch-tab .tab-newtab-dot {
-  background-color: #a1a1aa;
+  background-color: var(--text-2);
 }
 
 /* Squircle Glyphs */
@@ -219,7 +219,7 @@
   width: 14px;
   height: 14px;
   border-radius: 4px;
-  background-color: #3b82f6;
+  background-color: var(--attention);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -228,22 +228,22 @@
 }
 
 .zen-squircle {
-  background-color: #3f3f46;
+  background-color: var(--surface-3);
 }
 
 .zen-squircle-dot {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background-color: #ffffff;
+  background-color: var(--text);
 }
 
-/* Notch Tab Title (Dark crisp text on white active tab) */
+/* Notch Tab Title */
 .railway-notch-title {
   flex: 1;
   font-size: 13px;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--text);
   letter-spacing: -0.015em;
   white-space: nowrap;
   overflow: hidden;
@@ -258,7 +258,7 @@
   border-radius: 4px;
   background: transparent;
   border: none;
-  color: #64748b;
+  color: var(--text-3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -274,12 +274,12 @@
 }
 
 .railway-notch-close:hover {
-  background-color: rgba(0, 0, 0, 0.08);
-  color: #0f172a;
+  background-color: var(--control-hover);
+  color: var(--text);
 }
 
 /* ==========================================================================
-   Floating Popover Card (Matching the exact card in screenshot)
+   Floating Popover Card
    ========================================================================== */
 
 .railway-status-popover {
@@ -287,12 +287,10 @@
   top: 42px;
   left: 18px;
   width: 260px;
-  background-color: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  background-color: var(--surface-2);
+  border: 1px solid var(--chrome-border);
   border-radius: 14px;
-  box-shadow: 
-    0 18px 40px -4px rgba(0, 0, 0, 0.25),
-    0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-modal);
   padding: 15px 18px;
   z-index: 100;
   animation: railway-pop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
@@ -313,14 +311,14 @@
 .railway-popover-text {
   font-size: 13px;
   line-height: 1.45;
-  color: #374151;
+  color: var(--text-2);
   margin: 0 0 12px 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-family);
 }
 
 .railway-popover-text strong {
   font-weight: 600;
-  color: #111827;
+  color: var(--text);
 }
 
 .railway-popover-actions {
@@ -334,7 +332,7 @@
   padding: 0;
   font-size: 13.5px;
   font-weight: 600;
-  color: #2563eb;
+  color: var(--attention);
   cursor: pointer;
   outline: none;
   text-decoration: none;
@@ -342,7 +340,7 @@
 }
 
 .railway-wake-link:hover {
-  color: #1d4ed8;
+  color: var(--text);
   text-decoration: underline;
 }
 
@@ -365,12 +363,12 @@
   height: 33px;
   margin-top: 2.5px;
   padding: 0 14px;
-  background-color: rgba(255, 255, 255, 0.09);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: var(--surface-2);
+  border: 1px solid var(--chrome-border);
   border-radius: 5px;
-  color: #cbd5e1;
+  color: var(--text-2);
   cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-raised);
   transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
   min-width: 120px;
   max-width: 175px;
@@ -411,10 +409,10 @@
 
 /* Hover States */
 .railway-inactive-tab:hover {
-  background-color: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.22);
-  color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  background-color: var(--surface-3);
+  border-color: var(--line-strong);
+  color: var(--text);
+  box-shadow: var(--shadow-raised);
 }
 
 .railway-inactive-tab.is-slant-right:hover {
@@ -426,16 +424,16 @@
 }
 
 .is-dark-canvas .railway-inactive-tab {
-  background-color: rgba(26, 26, 32, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #e4e4e7;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  background-color: var(--surface-2);
+  border: 1px solid var(--chrome-border);
+  color: var(--text-2);
+  box-shadow: var(--shadow-raised);
 }
 
 .is-dark-canvas .railway-inactive-tab:hover {
-  background-color: rgba(38, 38, 46, 0.95);
-  border-color: rgba(255, 255, 255, 0.25);
-  color: #ffffff;
+  background-color: var(--surface-3);
+  border-color: var(--line-strong);
+  color: var(--text);
 }
 
 .railway-inactive-badge {
@@ -468,7 +466,7 @@
   border-radius: 4px;
   background: transparent;
   border: none;
-  color: #64748b;
+  color: var(--text-3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -482,7 +480,7 @@
 }
 
 .is-dark-canvas .railway-inactive-close {
-  color: #a1a1aa;
+  color: var(--text-3);
 }
 
 .railway-inactive-tab:hover .railway-inactive-close {
@@ -491,14 +489,14 @@
 }
 
 .railway-inactive-close:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-  color: #0f172a;
+  background-color: var(--control-hover);
+  color: var(--text);
   opacity: 1 !important;
 }
 
 .is-dark-canvas .railway-inactive-close:hover {
-  background-color: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
+  background-color: var(--control-hover);
+  color: var(--text);
 }
 
 /* ==========================================================================
@@ -510,9 +508,9 @@
   height: 28px;
   margin: 5px 6px 5px 4px;
   border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #cbd5e1;
+  background-color: var(--surface-2);
+  border: 1px solid var(--chrome-border);
+  color: var(--text-3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -525,20 +523,20 @@
 }
 
 .railway-add-tab-btn:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.28);
-  color: #ffffff;
+  background-color: var(--surface-3);
+  border-color: var(--line-strong);
+  color: var(--text);
   transform: translateY(-0.5px) scale(1.05);
 }
 
 .is-dark-canvas .railway-add-tab-btn {
-  background-color: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #a1a1aa;
+  background-color: var(--surface-2);
+  border: 1px solid var(--chrome-border);
+  color: var(--text-3);
 }
 
 .is-dark-canvas .railway-add-tab-btn:hover {
-  background-color: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.18);
-  color: #ffffff;
+  background-color: var(--surface-3);
+  border-color: var(--line-strong);
+  color: var(--text);
 }

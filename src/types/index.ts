@@ -48,6 +48,9 @@ export interface BrowserStoreState {
   // Agent Settings
   selectedModel: AgentModel;
 
+  // Theme
+  theme: 'dark' | 'light';
+
   // Actions
   setActivePage: (page: ActivePage) => void;
   openTab: (url?: string, title?: string) => void;
@@ -66,6 +69,8 @@ export interface BrowserStoreState {
   toggleAIChatSidebar: () => void;
   setAIChatSidebarOpen: (open: boolean) => void;
   setSelectedModel: (model: AgentModel) => void;
+  toggleTheme: () => void;
+  setTheme: (theme: 'dark' | 'light') => void;
   toggleOmnibar: (open?: boolean) => void;
   setOmnibarQuery: (query: string) => void;
 }

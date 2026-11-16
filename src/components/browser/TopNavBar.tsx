@@ -8,6 +8,8 @@ import {
   Search,
   Lock,
   PanelRight,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { useBrowserStore } from '../../store/useBrowserStore';
 import { isSearchQueryUrl, extractSearchQuery } from '../../services/searchEngine';
@@ -26,6 +28,8 @@ export const TopNavBar: React.FC = () => {
     navigateActiveTab,
     isAIChatSidebarOpen,
     toggleAIChatSidebar,
+    theme,
+    toggleTheme,
   } = useBrowserStore();
 
   const activeTab = tabs.find((t) => t.id === activeTabId) || tabs[0];
@@ -165,6 +169,15 @@ export const TopNavBar: React.FC = () => {
         {/* Right Action Group: New Tab, Home & Sidebar Toggle attached in single pod */}
         <div className="top-right-group" aria-label="Page Actions and Sidebar Toggle">
           <div className="nav-capsule-pod top-home-pod">
+            <button
+              type="button"
+              className="nav-tool-btn"
+              onClick={toggleTheme}
+              title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+              aria-label="Toggle Theme"
+            >
+              {theme === 'dark' ? <Sun size={14} strokeWidth={2} /> : <Moon size={14} strokeWidth={2} />}
+            </button>
             <button
               type="button"
               className="nav-tool-btn"

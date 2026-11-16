@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Minus, Square, Copy, X } from 'lucide-react';
+import { Minus, Square, Copy, X, Sun, Moon } from 'lucide-react';
+import { useBrowserStore } from '../../store/useBrowserStore';
 import './SlidingTitleBar.css';
 
 export const SlidingTitleBar: React.FC = () => {
+  const { theme, toggleTheme } = useBrowserStore();
   const [isVisible, setIsVisible] = useState(false);
   const [isMaximized, setIsMaximized] = useState(false);
   const isVisibleRef = useRef(false);
   isVisibleRef.current = isVisible;
+  const openTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Sync maximized state with Electron
@@ -27,7 +30,17 @@ export const SlidingTitleBar: React.FC = () => {
     };
   }, []);
 
-  // Clear timeout helper
+  const OPEN_DELAY_MS = 250; // Small intentional hover delay (1/4 sec) before opening
+  const CLOSE_DELAY_MS = 500; // 0.5-second grace period before closing
+
+  // Clear timeout helpers
+  const clearOpenTimeout = () => {
+    if (openTimeoutRef.current) {
+      clearTimeout(openTimeoutRef.current);
+      openTimeoutRef.current = null;
+    }
+  };
+
   const clearCloseTimeout = () => {
     if (closeTimeoutRef.current) {
       clearTimeout(closeTimeoutRef.current);
@@ -35,39 +48,58 @@ export const SlidingTitleBar: React.FC = () => {
     }
   };
 
-  const handleMouseEnter = () => {
+  // Schedule opening after intentionally hovering at top edge for OPEN_DELAY_MS
+  const scheduleOpen = () => {
+    clearCloseTimeout();
+    if (isVisibleRef.current) return;
+    if (!openTimeoutRef.current) {
+      openTimeoutRef.current = setTimeout(() => {
+        setIsVisible(true);
+        openTimeoutRef.current = null;
+      }, OPEN_DELAY_MS);
+    }
+  };
+
+  // Schedule closing after cursor leaves the top area
+  const scheduleClose = () => {
+    clearOpenTimeout();
+    if (!isVisibleRef.current) return;
+    if (!closeTimeoutRef.current) {
+      closeTimeoutRef.current = setTimeout(() => {
+        setIsVisible(false);
+        closeTimeoutRef.current = null;
+      }, CLOSE_DELAY_MS);
+    }
+  };
+
+  const handleBarMouseEnter = () => {
+    clearOpenTimeout();
     clearCloseTimeout();
     setIsVisible(true);
   };
 
-  const handleMouseLeave = () => {
-    clearCloseTimeout();
-    closeTimeoutRef.current = setTimeout(() => {
-      setIsVisible(false);
-      closeTimeoutRef.current = null;
-    }, 300);
-  };
-
-  // Top Edge Mouse Tracker: seamlessly triggers when cursor moves to top edge (y <= 8px),
-  // and smoothly dismisses when cursor moves below the bar (y > 46px).
+  // Top Edge Mouse Tracker: requires dwelling at the top edge (y <= 10px) for OPEN_DELAY_MS to open,
+  // cancels accidental flicks, keeps the bar open while on the bar (y <= 42px),
+  // and waits 1.5s before dismissing when moved below (y > 48px).
   useEffect(() => {
     const handleGlobalMouseMove = (e: MouseEvent) => {
-      if (e.clientY <= 8) {
+      if (e.clientY <= 10) {
+        scheduleOpen();
+      } else if (e.clientY <= 42 && isVisibleRef.current) {
         clearCloseTimeout();
-        setIsVisible(true);
-      } else if (e.clientY > 46 && isVisibleRef.current) {
-        if (!closeTimeoutRef.current) {
-          closeTimeoutRef.current = setTimeout(() => {
-            setIsVisible(false);
-            closeTimeoutRef.current = null;
-          }, 300);
+        clearOpenTimeout();
+      } else {
+        clearOpenTimeout(); // Cancels opening if cursor simply flicked past top edge
+        if (e.clientY > 48 && isVisibleRef.current) {
+          scheduleClose();
         }
       }
     };
 
-    window.addEventListener('mousemove', handleGlobalMouseMove);
+    window.addEventListener('mousemove', handleGlobalMouseMove, { passive: true });
     return () => {
       window.removeEventListener('mousemove', handleGlobalMouseMove);
+      clearOpenTimeout();
       clearCloseTimeout();
     };
   }, []);
@@ -101,6 +133,15 @@ export const SlidingTitleBar: React.FC = () => {
 
   return (
     <>
+      {/* Invisible Top Edge Trigger Zone across the entire window ceiling */}
+      <div
+        className="sliding-titlebar-trigger-zone"
+        onMouseEnter={scheduleOpen}
+        onMouseMove={scheduleOpen}
+        onMouseLeave={clearOpenTimeout}
+        aria-hidden="true"
+      />
+
       {/* Sliding Black Titlebar across the entire top of the window */}
       <AnimatePresence>
         {isVisible && (
@@ -110,8 +151,8 @@ export const SlidingTitleBar: React.FC = () => {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -42, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
+            onMouseEnter={handleBarMouseEnter}
+            onMouseLeave={scheduleClose}
             onDoubleClick={handleMaximize}
             aria-label="Window Titlebar"
           >
@@ -120,8 +161,18 @@ export const SlidingTitleBar: React.FC = () => {
               <span className="sliding-titlebar-app-name">Carule</span>
             </div>
 
-            {/* Window Controls at Far-Right (— ▢ ✕) */}
+            {/* Window Controls at Far-Right (Theme, — ▢ ✕) */}
             <div className="sliding-titlebar-controls" aria-label="Window Controls">
+              <button
+                type="button"
+                className="sliding-control-btn btn-theme-toggle"
+                onClick={toggleTheme}
+                title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+                aria-label="Toggle Theme"
+              >
+                {theme === 'dark' ? <Sun size={13} strokeWidth={2} /> : <Moon size={13} strokeWidth={2} />}
+              </button>
+
               <button
                 type="button"
                 className="sliding-control-btn btn-minimize"

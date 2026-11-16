@@ -4,10 +4,11 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 8px;
+  height: 10px;
   z-index: 9998;
   pointer-events: auto;
   background: transparent;
+  -webkit-app-region: no-drag !important;
 }
 
 /* Sliding Top Titlebar across entire window */
@@ -17,9 +18,9 @@
   left: 0;
   right: 0;
   height: 38px;
-  background-color: var(--app-shell-bg, #262626);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  background-color: var(--titlebar-bg, var(--bg-rail));
+  border-bottom: 1px solid var(--chrome-border);
+  box-shadow: var(--shadow-modal);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -44,7 +45,7 @@
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-3);
   text-transform: uppercase;
   pointer-events: none;
 }
@@ -66,7 +67,7 @@
   justify-content: center;
   background: transparent;
   border: none;
-  color: #e4e4e7;
+  color: var(--text-2);
   cursor: pointer !important;
   -webkit-app-region: no-drag !important;
   pointer-events: auto !important;
@@ -74,20 +75,20 @@
 }
 
 .sliding-control-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  background-color: var(--control-hover);
+  color: var(--text);
 }
 
 .sliding-control-btn:active {
-  background-color: rgba(255, 255, 255, 0.16);
+  background-color: var(--surface-3);
 }
 
 /* Danger Red Hover on Close Button */
 .sliding-control-btn.btn-close:hover {
-  background-color: #e11d48;
-  color: #ffffff;
+  background-color: var(--danger);
+  color: var(--composer-on-orb);
 }
 
 .sliding-control-btn.btn-close:active {
-  background-color: #be123c;
+  background-color: color-mix(in srgb, var(--danger) 80%, black);
 }

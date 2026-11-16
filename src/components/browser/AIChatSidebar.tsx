@@ -27,6 +27,7 @@ import {
   Cpu,
   Bot,
   Zap,
+  Crosshair,
 } from 'lucide-react';
 import { useBrowserStore } from '../../store/useBrowserStore';
 import type { AgentModel } from '../../types';
@@ -100,25 +101,35 @@ const MODEL_OPTIONS: ModelOption[] = [
   },
 ];
 
-// Stylized bot state animation icon matching reference prompt diagram
+// Stylized bot state animation icon matching reference prompt diagram with subtle ambient aura
 const BotStateIcon: React.FC<{ isRunning: boolean; isPaused: boolean }> = ({ isRunning }) => {
   return (
     <div className={`bot-state-icon-container ${isRunning ? 'is-running' : ''}`}>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Soft ambient breathing aura behind icon - zero harsh glow or drop-shadow filters */}
+      <span className="bot-state-aura" aria-hidden="true" />
+      <svg
+        width="20"
+        height="15"
+        viewBox="0 0 24 18"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="bot-state-svg"
+      >
         {/* Outer stylized eye contour */}
         <path
-          d="M2.5 12C4.5 7 8 3.5 12 3.5C16 3.5 19.5 7 21.5 12C19.5 17 16 20.5 12 20.5C8 20.5 4.5 17 2.5 12Z"
-          stroke="#107548"
-          strokeWidth="2.2"
+          d="M2 9C4.5 4.5 8 2 12 2C16 2 19.5 4.5 22 9C19.5 13.5 16 16 12 16C8 16 4.5 13.5 2 9Z"
+          stroke="var(--attention)"
+          strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        {/* Inner pupil circle */}
-        <circle cx="12" cy="12" r="3.6" fill="#107548" />
+        {/* Inner pupil circle with subtle organic breathing */}
+        <circle cx="12" cy="9" r="3" fill="var(--attention)" className="bot-state-pupil" />
         {/* Top-right sparkle star */}
         <path
-          d="M18.5 2.5L19.2 4.8L21.5 5.5L19.2 6.2L18.5 8.5L17.8 6.2L15.5 5.5L17.8 4.8L18.5 2.5Z"
-          fill="#107548"
+          d="M19 1.5L19.6 3.4L21.5 4L19.6 4.6L19 6.5L18.4 4.6L16.5 4L18.4 3.4L19 1.5Z"
+          fill="var(--attention)"
+          className="bot-state-sparkle"
         />
       </svg>
     </div>
@@ -131,9 +142,13 @@ export const AIChatSidebar: React.FC = () => {
 
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [agentStatus, setAgentStatus] = useState<'idle' | 'running' | 'paused'>('running');
+  const [agentStatus, setAgentStatus] = useState<'idle' | 'running' | 'paused'>('idle');
+  const [activeRunningPrompt, setActiveRunningPrompt] = useState<string>('');
   const [isListening, setIsListening] = useState(false);
-  const [contextName, setContextName] = useState('Competitor Analysis');
+  const [isCustomContext, setIsCustomContext] = useState(false);
+  const [contextName, setContextName] = useState<string>(() => {
+    return activeTab?.title && activeTab.title !== 'New Tab' ? activeTab.title : 'Active Tab';
+  });
   const [showContextPicker, setShowContextPicker] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [expandedThoughtId, setExpandedThoughtId] = useState<string | null>(null);
@@ -142,6 +157,7 @@ export const AIChatSidebar: React.FC = () => {
   const [feedback, setFeedback] = useState<Record<string, 'up' | 'down'>>({});
   const [hoveredThumbsUp, setHoveredThumbsUp] = useState<string | null>(null);
   const [attachedFiles, setAttachedFiles] = useState<string[]>([]);
+  const [isSelectingElement, setIsSelectingElement] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -159,12 +175,12 @@ export const AIChatSidebar: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Sync active tab into context name if not custom
+  // Sync active tab into context name when not manually overridden
   useEffect(() => {
-    if (activeTab?.title && contextName === 'Competitor Analysis' && activeTab.title !== 'New Tab') {
-      // Keep 'Competitor Analysis' as default to match user's image, or update when user picks tab
+    if (!isCustomContext && activeTab?.title && activeTab.title !== 'New Tab') {
+      setContextName(activeTab.title);
     }
-  }, [activeTab, contextName]);
+  }, [activeTab?.title, isCustomContext]);
 
   // Clean up timer on unmount
   useEffect(() => {
@@ -198,9 +214,14 @@ export const AIChatSidebar: React.FC = () => {
     : activeDomain || 'New Tab';
 
   // Dynamic intelligent response generation based on actual query & active tab
-  const handleSend = (textOverride?: string) => {
+  const handleSend = (textOverride?: string, customContextOverride?: string) => {
     const query = (textOverride || input).trim();
     if (!query) return;
+
+    if (customContextOverride) {
+      setContextName(customContextOverride);
+      setIsCustomContext(true);
+    }
 
     const userMsg: ChatMessage = {
       id: `user-${Date.now()}`,
@@ -211,6 +232,7 @@ export const AIChatSidebar: React.FC = () => {
 
     setMessages((prev) => [...prev, userMsg]);
     setInput('');
+    setActiveRunningPrompt(query);
     setAttachedFiles([]);
     setShowContextPicker(false);
     setIsTyping(true);
@@ -311,7 +333,8 @@ export const AIChatSidebar: React.FC = () => {
       setMessages((prev) => [...prev, assistantMsg]);
       setIsTyping(false);
       setAgentStatus('idle');
-    }, 900);
+      setActiveRunningPrompt('');
+    }, 1200);
   };
 
   // Stop process button handler
@@ -322,6 +345,7 @@ export const AIChatSidebar: React.FC = () => {
     }
     setIsTyping(false);
     setAgentStatus('idle');
+    setActiveRunningPrompt('');
   };
 
   // Pause / Resume toggle
@@ -338,10 +362,8 @@ export const AIChatSidebar: React.FC = () => {
       runTimeoutRef.current = setTimeout(() => {
         setIsTyping(false);
         setAgentStatus('idle');
-      }, 800);
-    } else {
-      // Idle -> start running demonstration
-      setAgentStatus('running');
+        setActiveRunningPrompt('');
+      }, 1000);
     }
   };
 
@@ -427,13 +449,17 @@ export const AIChatSidebar: React.FC = () => {
   };
 
   const handleNewChat = () => {
+    handleStop();
     setMessages([]);
     setInput('');
+    setActiveRunningPrompt('');
     setAttachedFiles([]);
     setExpandedThoughtId(null);
     setExpandedResultsId(null);
     setAgentStatus('idle');
     setIsTyping(false);
+    setIsCustomContext(false);
+    setContextName(activeTab?.title && activeTab.title !== 'New Tab' ? activeTab.title : 'Active Tab');
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -445,22 +471,49 @@ export const AIChatSidebar: React.FC = () => {
   };
 
   // Quick prompt recommendations when chat is empty
-  const quickPrompts = activeTab?.url
-    ? [
-        `Summarize ${contextName}`,
-        'Find key takeaways',
-        'Extract main topics',
-        'Draft follow-up email',
-      ]
-    : [
-        'Create drafts to my unread emails',
-        'Research a new topic',
-        'Summarize active workspace',
-        'Extract key takeaways',
-      ];
+  const quickPrompts: Array<{ label: string; query: string; context?: string }> = [
+    {
+      label: "Competitor Analysis: Keyword in H1",
+      query: "Show me who's using the keyword in H1, and sort by page load time descending",
+      context: "Competitor Analysis",
+    },
+    {
+      label: `Summarize ${contextName}`,
+      query: `Provide a detailed summary of ${contextName} and highlight core takeaways.`,
+      context: contextName,
+    },
+    {
+      label: 'Find key takeaways & insights',
+      query: `Extract key metrics, arguments, and actionable takeaways from the current page.`,
+      context: contextName,
+    },
+    {
+      label: 'Draft follow-up email',
+      query: `Draft a professional follow-up email summarizing our findings and next steps.`,
+      context: contextName,
+    },
+  ];
 
   const currentModelLabel =
     MODEL_OPTIONS.find((m) => m.value === selectedModel)?.name.split(' ')[0] || 'Auto';
+
+  // Highlight parameter tokens (e.g. "descending", "ascending") inside the prompt matching the reference design
+  const renderHighlightedPrompt = (text: string) => {
+    if (!text) return null;
+    const targetTokens = ['descending', 'ascending'];
+    const regex = new RegExp(`(\\b(?:${targetTokens.join('|')})\\b)`, 'gi');
+    const parts = text.split(regex);
+    return parts.map((part, index) => {
+      if (targetTokens.some((t) => t.toLowerCase() === part.toLowerCase())) {
+        return (
+          <span key={index} className="prompt-token-pill">
+            {part}
+          </span>
+        );
+      }
+      return <React.Fragment key={index}>{part}</React.Fragment>;
+    });
+  };
 
   return (
     <motion.aside
@@ -536,14 +589,14 @@ export const AIChatSidebar: React.FC = () => {
               </p>
 
               <div className="clean-empty-prompt-chips">
-                {quickPrompts.map((prompt) => (
+                {quickPrompts.map((item, idx) => (
                   <button
-                    key={prompt}
+                    key={idx}
                     type="button"
                     className="clean-empty-chip-btn"
-                    onClick={() => handleSend(prompt)}
+                    onClick={() => handleSend(item.query, item.context)}
                   >
-                    <span>{prompt}</span>
+                    <span>{item.label}</span>
                   </button>
                 ))}
               </div>
@@ -803,35 +856,55 @@ export const AIChatSidebar: React.FC = () => {
 
         {/* 3. Floating Prompt Design Input Bar (Matching Exact Reference Layout & Architecture) */}
         <div className="clean-composer-wrapper">
-          <div className="prompt-design-card">
-            {/* Status Header Banner: State animation icon + Bot activity msg + Bot status */}
-            <div
-              className={`prompt-status-banner ${
-                agentStatus === 'running'
-                  ? 'is-running'
-                  : agentStatus === 'paused'
-                  ? 'is-paused'
-                  : 'is-idle'
-              }`}
-            >
-              <div className="prompt-status-left">
-                <BotStateIcon isRunning={agentStatus === 'running'} isPaused={agentStatus === 'paused'} />
-                <span className="prompt-status-text">
-                  {agentStatus === 'running' ? 'Running ...' : agentStatus === 'paused' ? 'Paused' : 'Running ...'}
-                </span>
-              </div>
+          <div
+            className={`prompt-design-card ${
+              agentStatus === 'running'
+                ? 'is-running-card'
+                : agentStatus === 'paused'
+                ? 'is-paused-card'
+                : 'is-idle-card'
+            }`}
+          >
+            {/* Status Header Banner: Shown only when running or paused */}
+            <AnimatePresence>
+              {agentStatus !== 'idle' && (
+                <motion.div
+                  key="prompt-status-banner"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className={`prompt-status-banner ${agentStatus === 'paused' ? 'is-paused' : 'is-running'}`}
+                >
+                  <div className="prompt-status-left">
+                    <BotStateIcon isRunning={agentStatus === 'running'} isPaused={agentStatus === 'paused'} />
+                    <span className="prompt-status-text">
+                      {agentStatus === 'running' ? 'Running ...' : 'Paused'}
+                    </span>
+                  </div>
 
-              <button
-                type="button"
-                className={`prompt-status-right-btn ${agentStatus === 'paused' ? 'is-paused' : ''}`}
-                onClick={togglePause}
-                title={agentStatus === 'paused' ? 'Resume execution' : 'Pause execution'}
-                aria-label="Toggle pause"
-              >
-                <span className="prompt-pause-glyph">||</span>
-                <span>Paused</span>
-              </button>
-            </div>
+                  <button
+                    type="button"
+                    className={`prompt-status-right-btn ${agentStatus === 'paused' ? 'is-paused' : ''}`}
+                    onClick={togglePause}
+                    title={agentStatus === 'paused' ? 'Resume execution' : 'Pause execution'}
+                    aria-label="Toggle pause"
+                  >
+                    {agentStatus === 'running' ? (
+                      <>
+                        <span className="prompt-pause-glyph">||</span>
+                        <span>Pause</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="prompt-resume-glyph">▶</span>
+                        <span>Resume</span>
+                      </>
+                    )}
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Inner Prompt Card Body */}
             <div className="prompt-card-body">
@@ -843,7 +916,11 @@ export const AIChatSidebar: React.FC = () => {
                   onClick={() => setShowContextPicker((prev) => !prev)}
                   title={`Active context: ${contextName}`}
                 >
-                  <Table2 size={13} className="text-zinc-600 shrink-0" strokeWidth={1.8} />
+                  {contextName.toLowerCase().includes('competitor') || contextName.toLowerCase().includes('table') ? (
+                    <Table2 size={13} className="text-zinc-600 shrink-0" strokeWidth={1.8} />
+                  ) : (
+                    <Globe size={13} className="text-zinc-600 shrink-0" strokeWidth={1.8} />
+                  )}
                   <span className="prompt-context-pill-text">{contextName}</span>
                 </button>
 
@@ -874,6 +951,7 @@ export const AIChatSidebar: React.FC = () => {
                       className={`prompt-dropdown-item ${contextName === 'Competitor Analysis' ? 'is-active' : ''}`}
                       onClick={() => {
                         setContextName('Competitor Analysis');
+                        setIsCustomContext(true);
                         setShowContextPicker(false);
                       }}
                     >
@@ -885,6 +963,7 @@ export const AIChatSidebar: React.FC = () => {
                       className={`prompt-dropdown-item ${contextName === (activeTab?.title || 'Active Tab') ? 'is-active' : ''}`}
                       onClick={() => {
                         setContextName(activeTab?.title || 'Active Tab');
+                        setIsCustomContext(true);
                         setShowContextPicker(false);
                       }}
                     >
@@ -900,6 +979,7 @@ export const AIChatSidebar: React.FC = () => {
                           className={`prompt-dropdown-item ${contextName === (tab.title || tab.url) ? 'is-active' : ''}`}
                           onClick={() => {
                             setContextName(tab.title || tab.url || 'Tab');
+                            setIsCustomContext(true);
                             setShowContextPicker(false);
                           }}
                         >
@@ -936,15 +1016,24 @@ export const AIChatSidebar: React.FC = () => {
 
               {/* Prompt Text Input Area (Auto-expanding multi-line) */}
               <div className="prompt-textarea-row">
-                <textarea
-                  ref={textareaRef}
-                  rows={2}
-                  className="prompt-textarea"
-                  placeholder="Show me who's using the keyword in H1, and sort by page load time descending"
-                  value={input}
-                  onChange={handleInputChange}
-                  onKeyDown={handleKeyDown}
-                />
+                {agentStatus !== 'idle' ? (
+                  <div className="prompt-running-display">
+                    <span className="prompt-running-cursor" aria-hidden="true" />
+                    <span className="prompt-running-text">
+                      {renderHighlightedPrompt(activeRunningPrompt || input)}
+                    </span>
+                  </div>
+                ) : (
+                  <textarea
+                    ref={textareaRef}
+                    rows={2}
+                    className="prompt-textarea"
+                    placeholder="Ask anything, investigate, or automate with AI..."
+                    value={input}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                  />
+                )}
               </div>
 
               {/* Hidden File Input for Attach */}
@@ -957,7 +1046,7 @@ export const AIChatSidebar: React.FC = () => {
                 onChange={handleFileSelect}
               />
 
-              {/* Bottom Toolbar: Attach + Premium Model Select Dropdown + Voice + Send/Stop */}
+              {/* Bottom Toolbar: Attach + Edit + Premium Model Select Dropdown + Voice + Send/Stop */}
               <div className="prompt-bottom-toolbar">
                 <div className="prompt-tools-left">
                   {/* Attach Button */}
@@ -970,6 +1059,18 @@ export const AIChatSidebar: React.FC = () => {
                   >
                     <Paperclip size={12.5} strokeWidth={1.9} />
                     <span>Attach</span>
+                  </button>
+
+                  {/* Select element for contextual edit Button matching reference diagram */}
+                  <button
+                    type="button"
+                    className={`prompt-tool-pill-btn ${isSelectingElement ? 'is-active-tool' : ''}`}
+                    onClick={() => setIsSelectingElement((prev) => !prev)}
+                    title="Select element for contextual edit"
+                    aria-label="Select element for contextual edit"
+                  >
+                    <Crosshair size={12.5} strokeWidth={1.9} />
+                    <span>Edit</span>
                   </button>
 
                   {/* Premium Model Selection Dropdown using Radix UI Select */}
@@ -1056,24 +1157,24 @@ export const AIChatSidebar: React.FC = () => {
                   <button
                     type="button"
                     className={`prompt-send-stop-circle-btn ${
-                      agentStatus === 'running' || isTyping
+                      agentStatus !== 'idle'
                         ? 'is-running'
                         : input.trim()
                         ? 'can-send'
                         : 'is-idle'
                     }`}
                     onClick={() => {
-                      if (agentStatus === 'running' || isTyping) {
+                      if (agentStatus !== 'idle') {
                         handleStop();
                       } else if (input.trim()) {
                         handleSend();
                       }
                     }}
-                    title={agentStatus === 'running' || isTyping ? 'Stop process' : 'Send prompt'}
-                    aria-label={agentStatus === 'running' || isTyping ? 'Stop process' : 'Send prompt'}
-                    disabled={agentStatus === 'idle' && !isTyping && !input.trim()}
+                    title={agentStatus !== 'idle' ? 'Stop execution' : 'Send prompt'}
+                    aria-label={agentStatus !== 'idle' ? 'Stop execution' : 'Send prompt'}
+                    disabled={agentStatus === 'idle' && !input.trim()}
                   >
-                    {agentStatus === 'running' || isTyping ? (
+                    {agentStatus !== 'idle' ? (
                       <Square size={10} fill="currentColor" />
                     ) : (
                       <ArrowUp size={13} strokeWidth={2.4} />

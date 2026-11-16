@@ -17,11 +17,10 @@
   width: 100%;
   height: auto;
   min-width: 0;
-  margin: 0 var(--lining-size) var(--lining-size) 0; /* Flush at top, lining at bottom and right */
+  margin: var(--lining-size) var(--lining-size) var(--lining-size) 0; /* Equal lining at top, bottom, and right */
   background-color: var(--canvas-bg);
-  border-radius: 0 0 var(--canvas-radius) var(--canvas-radius); /* Flush at top */
+  border-radius: var(--canvas-radius); /* Symmetrical rounding on all four corners */
   border: var(--canvas-border);
-  border-top: none; /* No top border gap above notch */
   box-shadow: var(--canvas-shadow);
   display: flex;
   flex-direction: column;

@@ -8,7 +8,7 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0 12px 0;
+  padding: 12px 0;
   user-select: none;
   z-index: 40;
 }
@@ -22,14 +22,14 @@
   width: 100%;
 }
 
-/* Logo Slot: Pitch black placeholder */
+/* Logo Slot: Pitch black placeholder as recommended */
 .sidebar-logo-slot {
   width: 38px;
   height: 38px;
   border-radius: 11px;
-  background-color: #121214;
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.03);
+  background-color: var(--logo-box);
+  border: 1px solid var(--chrome-border);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.04);
   margin-bottom: 4px;
 }
 
@@ -53,18 +53,18 @@
   justify-content: center;
   background: transparent;
   border: none;
-  color: #a1a1aa;
+  color: var(--text-3);
   cursor: pointer;
   outline: none;
   transition: color 0.15s ease;
 }
 
 .sidebar-icon-btn:hover {
-  color: #f4f4f6;
+  color: var(--text-2);
 }
 
 .sidebar-icon-btn.is-active {
-  color: #ffffff;
+  color: var(--attention);
 }
 
 /* Liquid Smooth Active Pill (Animated via Framer Motion layoutId) */
@@ -72,24 +72,24 @@
   position: absolute;
   inset: 0;
   border-radius: 11px;
-  background-color: rgba(255, 255, 255, 0.13);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28), 0 1px 3px rgba(0, 0, 0, 0.15);
+  background-color: var(--surface-2);
+  border: 1px solid var(--chrome-border);
+  box-shadow: var(--shadow-raised);
   z-index: 1;
   pointer-events: none;
 }
 
-/* Liquid Left Accent Indicator Bar */
+/* Liquid Left Accent Indicator Bar: Flush against outer left edge of the 56px rail (Option A & B) */
 .sidebar-active-bar {
   position: absolute;
-  left: 2px;
+  left: -9px;
   top: 50%;
   transform: translateY(-50%);
   width: 3px;
-  height: 16px;
-  border-radius: 2px;
-  background-color: #ffffff;
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.45);
+  height: 20px;
+  border-radius: 0 3px 3px 0;
+  background-color: var(--attention);
+  box-shadow: 0 0 8px var(--attention-subtle);
   z-index: 2;
   pointer-events: none;
 }
@@ -99,8 +99,8 @@
   position: absolute;
   inset: 0;
   border-radius: 11px;
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.03);
+  background-color: var(--control-hover);
+  border: 1px solid var(--line);
   z-index: 0;
   pointer-events: none;
 }
